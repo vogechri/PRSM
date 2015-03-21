@@ -1,21 +1,26 @@
 /*
- * MexInterface.cpp
- *
- *  Created on: Feb 12, 2010
- *      Author: christoph vogel
- */
+Copyright (C) 2013 Christoph Vogel, PhD. Student ETH Zurich
+All rights reserved.
+
+This software is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3.0 of the License, or (at your option) any later version.
+
+This software is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this software.
+*/
 
 #include <iostream>  // iostream must be before mex -> else redefinition
 #include "mex.h"
 
 #include "FullStepMatlab.h"
 
-//mex mex_sum_openmp.c CFLAGS="\$CFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp"
-// no openmp but gcc 4.1
-// mex CC=g++-4.1 CXX=g++-4.1 CFLAGS='-fPIC' LD=g++-4.1 -O -I/home/christop/CPP -lm -output Smooth_mex MexInterface.cpp
-
-// mex CXX=g++-4.2 CXX=g++-4.2 LD=g++-4.2 -I/home/christop/CPP -lm -output mexTest IRLS_mex.cpp
-// mex CC=g++-4.2 CXX=g++-4.2 CFLAGS='-fPIC -fopenmp' LD=g++-4.2 -O -I/home/christop/CPP -lm -lgomp -output Smooth_mex MexInterface.cpp
 void mexFunction ( int nlhs, mxArray *plhs[],
                    int nrhs, const mxArray *prhs[])
 {
