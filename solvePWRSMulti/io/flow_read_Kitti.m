@@ -2,8 +2,8 @@ function F = flow_read_Kitti (filename)
 % loads flow field F from png file
 % for details see readme.txt
 
-%I = double(imread(filename));
-I = double(pngStuff(filename));
+I = double(imread(filename));
+%I = double(pngStuff(filename));
 
 F_u = (I(:,:,1)-2^15)/64;
 F_v = (I(:,:,2)-2^15)/64;

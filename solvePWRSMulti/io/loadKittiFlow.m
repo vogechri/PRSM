@@ -17,10 +17,10 @@ else
   localFolder = sprintf('%s/',strFolder, 'data_stereo_flow/testing');
 end
 
-  ImgL{1} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumber0 )))/255;
-  ImgR{1} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumber0 )))/255;
-  ImgL{2} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumber1 )))/255;
-  ImgR{2} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumber1 )))/255;
+  ImgL{1} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumber0 )))/255;
+  ImgR{1} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumber0 )))/255;
+  ImgL{2} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumber1 )))/255;
+  ImgR{2} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumber1 )))/255;
   calibFile = sprintf('%s/%s/%06d.txt', localFolder, '/calib', nr );
 
   data_supp = loadCalibrationKITTI_new( calibFile );
@@ -56,8 +56,8 @@ if p.subImg>0
   strNumberprev = sprintf( '%06d_%02d', nr, p.subImg-1 );
   try
   ImgOld = cell(1,2*p.frames+2);
-  ImgOld{1} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumberprev )))/255;
-  ImgOld{2} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumberprev )))/255;
+  ImgOld{1} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumberprev )))/255;
+  ImgOld{2} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumberprev )))/255;
   cam.Iold = ImgOld;
   catch
     fprintf('Failed to load images: %s', sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumberprev ) );
@@ -68,8 +68,8 @@ if p.subImg<19
   strNumberprev = sprintf( '%06d_%02d', nr, p.subImg+2 );
   try
   Imgnew = cell(1,2*p.frames+2);
-  Imgnew{1} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumberprev )))/255;
-  Imgnew{2} = double(pngStuff(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumberprev )))/255;
+  Imgnew{1} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumberprev )))/255;
+  Imgnew{2} = double(imread(sprintf('%s/%s/%s.png', localFolder, '/image_1', strNumberprev )))/255;
   cam.Inew = Imgnew;
   catch
     fprintf('Failed to load images: %s', sprintf('%s/%s/%s.png', localFolder, '/image_0', strNumberprev ) );

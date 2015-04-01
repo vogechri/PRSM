@@ -56,15 +56,15 @@ plotXtraPrev = 0;
     ImgI{2} = cam.Inew ;
   else  
     if par.testing
-      %ImgI{1} = double(pngStuff(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/testing/image_0', strNumberi )))/255;
-      %ImgI{2} = double(pngStuff(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/testing/image_1', strNumberi )))/255;
-      ImgI{1} = double(pngStuff(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/testing/image_0', strNumberi )))/255;
-      ImgI{2} = double(pngStuff(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/testing/image_1', strNumberi )))/255;
+      %ImgI{1} = double(imread(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/testing/image_0', strNumberi )))/255;
+      %ImgI{2} = double(imread(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/testing/image_1', strNumberi )))/255;
+      ImgI{1} = double(imread(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/testing/image_0', strNumberi )))/255;
+      ImgI{2} = double(imread(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/testing/image_1', strNumberi )))/255;
     else
-      %ImgI{1} = double(pngStuff(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/training/image_0', strNumberi )))/255;
-      %ImgI{2} = double(pngStuff(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/training/image_1', strNumberi )))/255;      
-      ImgI{1} = double(pngStuff(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/training/image_0', strNumberi )))/255;
-      ImgI{2} = double(pngStuff(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/training/image_1', strNumberi )))/255;
+      %ImgI{1} = double(imread(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/training/image_0', strNumberi )))/255;
+      %ImgI{2} = double(imread(sprintf('%s/%s/%s.png', '../../data/', '/data_stereo_flow/training/image_1', strNumberi )))/255;      
+      ImgI{1} = double(imread(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/training/image_0', strNumberi )))/255;
+      ImgI{2} = double(imread(sprintf('%s/%s/%s.png', '../../../data/', 'data_stereo_flow/data_stereo_flow/training/image_1', strNumberi )))/255;
     end
   end
 

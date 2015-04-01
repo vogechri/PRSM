@@ -58,15 +58,16 @@ For initialisation we use the method described in (with a lot less iterations):
 
 INSTALLING & RUNNING
 
-1.	Download and install QPBO v1.31 from
+1.	Download and install maxflow v3.03 from 
+	http://pub.ist.ac.at/~vnk/software.html 
+	and place it into ./cppMulti.
+	Alternatively one can also
+    download and the recent version of QPBO from
 	http://pub.ist.ac.at/~vnk/software.html
 	and place it into ./cpp
 	and adjust the definition file DataDefinitionVC.h in the folder
-	cppMulti/Brutus_C_multi
-	or better instead:
-	Download and install maxflow v3.03 from 
-	http://pub.ist.ac.at/~vnk/software.html 
-	and place it into ./cppMulti
+	cppMulti/Brutus_C_multi.
+	Note that the code was tested with version v1.31 only.
 	
 2.  Start MATLAB and run compileMex.m to build the utilities binaries.
     (This step can be omitted if you are using Windows 64 bit or Unix 64 bit.)

@@ -141,7 +141,6 @@ if ~isdeployed
   path(path, './Segmentation');
   path(path, './weighting');
   path(path, './proposals');
-  path(path, './TVSeg');
   path(path,'./stuff/');
   path(path,'./pwrsf/');
   path(path,'../export_fig');%plotting - read the Readme
