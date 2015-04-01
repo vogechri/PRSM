@@ -60,13 +60,13 @@ INSTALLING & RUNNING
 
 1.	Download and install maxflow v3.03 from 
 	http://pub.ist.ac.at/~vnk/software.html 
-	and place it into ./cppMulti.
+	and place it into ./SceneFlowCode.
 	Alternatively one can also
     download and the recent version of QPBO from
 	http://pub.ist.ac.at/~vnk/software.html
 	and place it into ./cpp
 	and adjust the definition file DataDefinitionVC.h in the folder
-	cppMulti/Brutus_C_multi.
+	SceneFlowCode/VCSF_CODE.
 	QPBO is needed for the ICCV version of the code only.
 	Please note that the code was tested with version v1.31 only.
 	
