@@ -18,37 +18,43 @@ License along with this software.*/
 #ifndef _DATA_DEFINESVC_H
 #define _DATA_DEFINESVC_H
 
-/// turn openmp usage off -- also do not link the library
+/// turn openmp usage off -- also do not link the library - should be used as a compiler switch
 //#define _NO_OPENMP
 
-/// maximal number of threads used:
+/// maximal number of threads used, the number is reduced accordingly if the machine can not support the given number
 #define _max_num_threads_used_ 4
 
-/// compiler can handle sse4.1 ? - not important anyway
-//#define __SSE4_1__
-
-/// in case the computer can not handle sse(2) extensions
+/// in case the computer can not handle sse(2) extensions turn this on or compile with the switch
 //#define _no_sse_ip_
 
 /////////////// from DataPerSegment/Pixel: ///////////////
-// stupid special case, if pixel moves behind camera what to do : impossible or oob
+/// 'impossible' pixel receive this additional penalty, default 1.6
 #define _impFactor_ 1.6
 
-// special case, if pixel moves behind camera what to do : impossible or oob (yes) so off
+/// special case, if pixel moves behind camera: impossible (on) or out of bounds (default: off)
 //#define _inFrontPenalty_
 
-// no influence 1.0 is on the image plane
+// minimal depth of a pixel in a camera -- 1.0 is on the image plane, should be kept as is
 #define _minDepth_ 1.0
-//1.25
 
-// only FW - no expansion possible
-#define _expansion_ON_
-
+/// default on, just to make the reader aware of this idea
 #define _Shortcut_Speedup_
 
-// indeed faster without but energy lower with
+/// indeed a bit faster without but energy lower with, default: on
 #define _withoutCuttingImprobable_
 // commenting this leads to smaller expansion graphs constructed
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+//// from here on, change only if you know what you are doing: /////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+
+// only FW - no expansion possible -- can be turned off for debugging only
+#define _expansion_ON_
 
 // auto only for valid data terms (not oob, occ, imp) -- does nothing :) 
 #define _checkValiadityAuto_
@@ -81,7 +87,7 @@ License along with this software.*/
 #endif
 //////////////////////////////////////////////
 
-// penalize unreasonible motions (super fast mvps, geometry too close or behind camera)
+// penalize unreasonable motions (super fast mvps, geometry too close or behind camera)
 // enable only for final improvement, very simple test to drop non-sense motions, better filter in advance to prevent eval of data ,etc. 
 #define _MotionChecking_
 //////////////////////////////////////////////
@@ -95,17 +101,14 @@ License along with this software.*/
 //#define _simple_data_
 //#define _FW_ONLY_
 
-//using namespace std;
-//using namespace Math;
+/// compiler can handle sse4.1 ? - not important anyway off by default
+//#define __SSE4_1__
 
 /// defines whether the rescaling of oob pixel has to be done locally(per pixel) or globally per segment
 //#define _globalRescaling_
 
 /// debug output
 //#define __QUIET__
-
-/// use openmp or not
-//#define _NO_OPENMP
 
 /// cutoff data penalty at some point appears to be slightly worse - but faster if occlusion is on (less supermodular potentials)
 //#define _data_truncation_
