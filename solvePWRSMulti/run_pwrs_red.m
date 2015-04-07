@@ -32,6 +32,7 @@ function flow2d = run_pwrs_red(imgNr, storeFolder, subImg, ...
 
 global doKittiErrors;doKittiErrors =0; % turn on/off permanent error evaluation
 storeOutput = 1; % store the output as flow/stereo files in the folder: storeFolder 
+% saved files can  be read with flow_read( 'filename' )
 
 % folder with image data to read from -- ausmes certain structure
 dataFolder =  '../../../Desktop/work/data/';
