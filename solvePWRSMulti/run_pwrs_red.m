@@ -79,7 +79,7 @@ p.vcEpsSeg   = 0.15; % epsilon in vc data term on segment level, default 0.15 or
 p.vcEpsPix   = 0.015;% epsilon in vc data term on pixel level, default 0.15 or 0.1
 
 p.locRep=1;% optional : naive local replacement for view-consistent implementation;
-p.refine=0;% optional : hierarchical refinement
+p.refine=1;% optional : hierarchical refinement
 
 p.doSeg=0; % do pwrsf (iccv13, basic) for preprocessing leads to a reduction of proposals
 p.doJit=0; % do 'local replacement' (iccv13 or journal for reference) for preprocessing
