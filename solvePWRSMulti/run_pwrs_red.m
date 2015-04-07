@@ -1,3 +1,20 @@
+%%% demonstration function, reads kitti images and delivers error measures
+%%% and if storeOutput == 1 stores the results in the folder storeFolder
+%%% To run on other input data please change/modifiy the function
+%%% loadKittiFlow. As a sceneflow method the code needs the calibration of
+%%% the cameras besides the image data, thus such a function loading the 
+%%% data was prefered.
+%%% 
+%%% please read through the comments directly below to receive an
+%%% explanation of the paramters. The image data is encoded by scene-number: imgNr
+%%% and by frame number: subImg.
+%%% please note that consecutive images in time are assumed to have
+%%% consecutive subImg numbers. The three frame method assumes computes
+%%% a solution for the middle frame and assumes the past and next frames to
+%%% exist. Further to reuse proposals from the previous solution the
+%%% function must have been run on the frame number before. 
+%%% Three frames can be turned off by setting p.use3Frames   = false; below
+%%%
 function flow2d = run_pwrs_red(imgNr, storeFolder, subImg, ...
  dt, ds, ts, dj, tj, ps, oob, infoFileName, testing, segWeight, pseg, pjit, pego, as, tp, ots )
 
@@ -6,21 +23,18 @@ function flow2d = run_pwrs_red(imgNr, storeFolder, subImg, ...
 % example: set: p.saveProposals =true; p.use3Frames = true;p.usePrevProps = true;
 %run_pwrs_red( [151,27], './3Frames/', [8,9,10], 0.4, 0.045, 1.0, 20, 20, 25 );
 
-global doKittiErrors;doKittiErrors =1; % turn on/off permanent error evaluation
-doKitti = 1;
+global doKittiErrors;doKittiErrors =0; % turn on/off permanent error evaluation
+storeOutput = 1; % store the output as flow/stereo files in the folder: storeFolder 
 
 % folder with image data to read from -- ausmes certain structure
 dataFolder =  '../../../Desktop/work/data/';
-%dataFolder = '../../../data/data_stereo_flow/';
-dataFolder =  '../kittidata/'; % local folder -- just a few images added
+dataFolder =  '../kittidata/'; % local folder -- just a few images added for testing
 
-p.testing = 0; % whether to load kitti images from the training or test set
 p.subImg  = 10; % the frame number to proces, eg 10 -> pics 9 (if 3-frame version)
 % 10 and 11 are loaded. To suppress the camera motion, eg. from a stereo
 % rig mounted on top of the car however a solution of the previous frame
 % must be available: .usePrevProps = true and p.use3Frames   = true
 % 
-%
 % save proposals for future frames in p.tempFolder
 p.saveProposals = true;
 % 'temporal' folder for multi frame version -- save&read proposals of previous frames
@@ -40,7 +54,7 @@ p.usePrevProps = true; % use proposals from the previous time step -> loaded fro
 p.computeRflow = true;          % use flow from right camera 
 p.generateMoreProposals = true; % demonstrates how to append additional proposals
 %
-p.fitSegs      = 1000;  % reduce # of fitted proposals to this value, default 1000 
+p.fitSegs  = 1000;  % reduce # of fitted proposals to this value, default 1000 
 p.ps  = 25; % patchsize of per pixel optimization: 25: 50x50 pixel, default 25
 p.oob = 0.8;% penalty for border oracle (oracle is derived from the initial solutions)
 p.tj  = 20; % truncation value of motion smoothness, default 20
@@ -69,6 +83,7 @@ p.doEgo=0; % do egomotion, same as above would be easy to integrate to VC but no
 p.gx=8; % 8 kitti - can be adjusted to image size / relative size
 p.gy=5; % 5 kitti
 p.gridSize= 16; % kitti default 16 but depends on image size trades accuracy with speed
+p.testing = 0; % whether to load kitti images from the training or test set
 
 if exist('pseg','var')
   p.doSeg = pseg;
@@ -168,28 +183,21 @@ for testImg_ = 1:numel(testImages)
   
   for subImg_ = 1:numel(subImages)
     p.subImg = subImages(subImg_ );
+ 
+% can sometimes be unwanted:
+%    if exist( sprintf('%s/RESULTS_K%03d_%02d_%s.txt', p.sFolder, p.imgNr, p.subImg, date), 'file' )
+%      continue;
+%    end
     
-    if exist( sprintf('%s/RESULTS_K%03d_%02d_%s.txt', p.sFolder, p.imgNr, p.subImg, date), 'file' )
-      continue;
-    end
-    
+    doKitti     = 1;
     if doKitti
       [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadKittiFlow(dataFolder , p.imgNr, p);
     else
-      % NZ problem no cam pair can stereo reconstruct the pedestrians except
-      % center right
-      % left as left -> left right or left center
-      % % [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadZealandFlow('c:/data/' , p.imgNr, p, 'people');%'bridge');
-      
-      % center as left -> center right as default -- later use 3 cams from center
-      %  [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadZealandFlowCentered('c:/data/' , p.imgNr, p, 'people'); % , 'bridge');
-      
-      [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadTestFlow( p.imgNr, p);
+      % room to load your data:
     end
     p.imageName = imageName;
     
     % construct the initial segmentation: cubes almost as good as super-pixel
-    %Seg = SegmentImage( ref.I(1).I );%, 13); % 2nd parameter defines desired patchsize: the higher the larger the initial patches
     Seg = SegmentImageCube( ref.I(1).I, p.gridSize, p );%, 13); % 2nd parameter defines desired patchsize: the higher the larger the initial patches
     Seg = correctSegCenters(Seg);
     Seg = setWeights_patchSmooth( Seg, cam(1).Kl );
@@ -223,6 +231,7 @@ for testImg_ = 1:numel(testImages)
     % new simplified version - does it work ?
     [flow2d, Energy] = pwrsfMulti_simpler_v3 ( ref, cam, p, Seg, N_prop, RT_prop, oracle );
     
+    doKittiErrors =1;
     [occErr, noccErr, epes] = getKittiErrSF ( flow2d(:,:,1), flow2d(:,:,2), flow2d(:,:,3) ); %, p, 1 );
     
     kittiStr = sprintf('DispPix-occ 2/3/4/5 %.3f & %.3f & %.3f & %.3f\nFlowPix-occ 2/3/4/5 %.3f & %.3f & %.3f & %.3f\n', occErr.err2, occErr.err3, occErr.err4, occErr.err5, occErr.err2f, occErr.err3f, occErr.err4f, occErr.err5f);
@@ -243,9 +252,11 @@ for testImg_ = 1:numel(testImages)
     end
 
     % store results:
-%    flow_write( cat(3, squeeze(flow2d(:,:,2)), squeeze(flow2d(:,:,3)), ones(size(squeeze(flow2d(:,:,3))))), sprintf('%s/flow/%06d_%02d.png', p.sFolder, p.imgNr, p.subImg ));
-%    disp_write( squeeze(-flow2d(:,:,1)), sprintf('%s/disp/%06d_%02d.png', p.sFolder, p.imgNr, p.subImg ));
-    
+    if storeOutput
+      flow_write( cat(3, squeeze(flow2d(:,:,2)), squeeze(flow2d(:,:,3)), ones(size(squeeze(flow2d(:,:,3))))), sprintf('%s/flow/%06d_%02d.png', p.sFolder, p.imgNr, p.subImg ));
+      disp_write( squeeze(-flow2d(:,:,1)), sprintf('%s/disp/%06d_%02d.png', p.sFolder, p.imgNr, p.subImg ));
+    end
+
   end
 end
 end
