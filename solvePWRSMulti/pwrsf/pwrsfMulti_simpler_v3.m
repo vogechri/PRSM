@@ -6,13 +6,13 @@ pwrs_ds = 0.03;%0.06 -- smoothness iccv version
 
 fromProposals    = ~(par.doSeg || par.doJit || par.doEgo); % either directly from proposals or intermediate pwrs step
 % local replacement strategy for VC-SF -- implemented suboptimally but at least its there - for sure better to follow the pwrs (iccv13) implementation 
-lrp            = 1 & fromProposals; % alternative to per-run pwrsf
+lrp            = par.locRep & fromProposals; % alternative to per-run pwrsf
 reduceRNTProps = 1; % default: ON -- reduce similar proposals, combining them into a single one
 doAutoIntern   = 1; % default: ON -- estimate above from data term value in optimization
 localReduction = 0; % default: OFF -- tries to preselect proposals by solving a simpler problem first
 gys=2;gxs=2;        % expansion region for local replacement and reduction -- NOT TOO LARGE !
 %
-refineLoop   = 1;% run refining based on loop default: ON  if 16x16 grid
+refineLoop   = par.refine;% run refining based on loop default: ON  if 16x16 grid
 endlevel     = 8;% refinement in 2^-1 steps, so startlevel= 16, 8 , .., endlevel
 %
 useFWprojectedProposals = 1; % default:on, 3frame off? 2 frame on 
@@ -581,10 +581,10 @@ end
       
 %    save( sprintf( '%s/perSegNew3f_%03d_%02d.mat', par.sFolder, par.imgNr, par.subImg), 'p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','p11', 'p12', 'p13','p14','p15','p16','p17','p18','p19','p20','p21','p22','p23','p24','p25', 'p26', 'p27','p28','p29','p30','p31','p32');
       
-      [newIds, allD, dmX, dataS, energyInfo] = ..., dataA ] = ...Seg_2F_new_3f, Seg_3F_boxW3, Seg_noAuto, Seg_3F_SM
+      [newIds, allD, dmX, dataS, energyInfo] = ..., dataA ] = ...
         Seg_3SM( p1,p2,p3,p4,p5,p6,p7,p8,p9, p10,p11,p12,p13,p14,p15,p16,p17,p18,p19, p20,p21,p22,p23,p24,p25,p26,p27,p28,p29, p30,p31,p32);
     else
-      [newIds, allD, dmX, dataS, energyInfo] = ..., dataA ] = ...Seg_2F_new_3f, Seg_3F_boxW3, Seg_noAuto
+      [newIds, allD, dmX, dataS, energyInfo] = ..., dataA ] = ...
         Seg_3SM( p1,p2,p3,p4,p5,p6,p7,p8,p9, p10,p11,p12,p13,p14,p15,p16,p17,p18,p19, p20,p21,p22,p23,p24,p25,p26);
     end
     level = double(int32(level/2));
@@ -609,37 +609,44 @@ end
 
   getKittiErr3dSF ( Seg, ref,cam(1), N_linM(:,vcIds{1}+1), Rt_linM(:,:,vcIds{1}+1), 0 ); % old
 
-projImg1 = Seg.Img;
-for i=1:max(Seg.Img(:))+1 projImg1(Seg.Img == i-1) = vcIds{1}(i);end;
-projImg2 = Seg.Img;
-for i=1:max(Seg.Img(:))+1 projImg2(Seg.Img == i-1) = vcIds{2}(i);end;
-projImg3 = Seg.Img;
-for i=1:max(Seg.Img(:))+1 projImg3(Seg.Img == i-1) = vcIds{3}(i);end;
-projImg4 = Seg.Img;
-for i=1:max(Seg.Img(:))+1 projImg4(Seg.Img == i-1) = vcIds{4}(i);end;
-Seg1=Seg;Seg1.Img = int32(projImg1);Seg2=Seg;Seg2.Img = int32(projImg2);
-Seg3=Seg;Seg3.Img = int32(projImg3);Seg4=Seg;Seg4.Img = int32(projImg4);
-
+projImg1 = Seg.Img;projImg2 = Seg.Img;projImg3 = Seg.Img;projImg4 = Seg.Img;
 if numel(vcIds)==6 %exist('newIds5', 'var')
-  projImg5 = Seg.Img;
-  for i=1:max(Seg.Img(:))+1 projImg5(Seg.Img == i-1) = vcIds{5}(i);end;
-  projImg6 = Seg.Img;
-  for i=1:max(Seg.Img(:))+1 projImg6(Seg.Img == i-1) = vcIds{6}(i);end;
-  Seg5=Seg;Seg5.Img = int32(projImg5);Seg6=Seg;Seg6.Img = int32(projImg6);
+  projImg5 = Seg.Img;  projImg6 = Seg.Img;
+end
+if exist('xtraCam', 'var')
+  projImg2x = Seg.Img;  projImg4x = Seg.Img;
 end
 
+for i=1:max(Seg.Img(:))+1 
+  copySegids = Seg.Ids{i}+1;%Seg.Img == i-1;
+  projImg1(copySegids) = vcIds{1}(i);
+  projImg2(copySegids) = vcIds{2}(i);
+  projImg3(copySegids) = vcIds{3}(i);
+  projImg4(copySegids) = vcIds{4}(i);
+  if numel(vcIds)==6
+    projImg5(copySegids) = vcIds{5}(i);
+    projImg6(copySegids) = vcIds{6}(i);
+  end
+  if exist('xtraCam', 'var')
+    projImg2x(copySegids) = xtraCam{1}(i);%Seg.Img == i-1;
+    projImg4x(copySegids) = xtraCam{2}(i);
+  end
+end
+
+Seg1=Seg;Seg1.Img = int32(projImg1);Seg2=Seg;Seg2.Img = int32(projImg2);
+Seg3=Seg;Seg3.Img = int32(projImg3);Seg4=Seg;Seg4.Img = int32(projImg4);
+if numel(vcIds)==6  
+  Seg5=Seg;Seg5.Img = int32(projImg5);Seg6=Seg;Seg6.Img = int32(projImg6);
+end
 if exist('xtraCam', 'var')
-  projImg2x = Seg.Img;
-  for i=1:max(Seg.Img(:))+1 projImg2x(Seg.Img == i-1) = xtraCam{1}(i);end;
-  projImg4x = Seg.Img;
-  for i=1:max(Seg.Img(:))+1 projImg4x(Seg.Img == i-1) = xtraCam{2}(i);end;
   Seg2x=Seg;Seg2x.Img = int32(projImg2x);Seg4x=Seg;Seg4x.Img = int32(projImg4x);
 end
 
+% 4 frames: as above
 % projImg7 = Seg.Img;
-% for i=1:max(Seg.Img(:))+1 projImg7(Seg.Img == i-1) = newIds7(i);end;
+% for i=1:max(Seg.Img(:))+1 projImg7(Seg.Ids{i}+1) = newIds7(i);end;
 % projImg8 = Seg.Img;
-% for i=1:max(Seg.Img(:))+1 projImg8(Seg.Img == i-1) = newIds8(i);end;
+% for i=1:max(Seg.Img(:))+1 projImg8(Seg.Ids{i}+1) = newIds8(i);end;
 
 if plotresults==1
   selectedBW = zeros(size(Seg.Img));
@@ -705,6 +712,7 @@ end
       centerIds      = int32(cat(1, centerIds, newIdsT1));
     end
   end
+%%%
 
 %     p1=cat( 3, ref.I(1).I, cam(1).I(1).I); 
 %     p2=cat( 3, ref.I(2).I, cam(1).I(2).I); 
@@ -750,43 +758,45 @@ end
   %%% rest: plotting error evaluations, energies, etc.
   getKittiErr3dSF ( SegNew, ref, cam(1), N_lin, Rt_lin, 0 );
 
-Seg1=Seg;Seg1.Img = int32(allSolutions(:,:,1));Seg2=Seg;Seg2.Img = int32(allSolutions(:,:,2));Seg3=Seg;Seg3.Img = int32(allSolutions(:,:,3));Seg4=Seg;Seg4.Img = int32(allSolutions(:,:,4));
-% ?? PLOTTING:
-for i=1:max(Seg1.Img(:))+1 Seg1.Ids{i} = find(Seg1.Img == i-1)-1;end;
-for i=1:max(Seg2.Img(:))+1 Seg2.Ids{i} = find(Seg2.Img == i-1)-1;end;
-for i=1:max(Seg3.Img(:))+1 Seg3.Ids{i} = find(Seg3.Img == i-1)-1;end;
-for i=1:max(Seg4.Img(:))+1 Seg4.Ids{i} = find(Seg4.Img == i-1)-1;end;
-
-if size( allSolutions, 3) > 4
-  Seg5=Seg;Seg5.Img = int32(allSolutions(:,:,5));Seg6=Seg;Seg6.Img = int32(allSolutions(:,:,6));
-end
-if size( allSolutions, 3) > 6
-  Seg7=Seg;Seg7.Img = int32(allSolutions(:,:,7));Seg8=Seg;Seg8.Img = int32(allSolutions(:,:,8));
-end
-
-if  plotresults == 1
-  if exist('Seg5','var') && isfield(cam,'Iold') % exist('ref_inv','var')
-    plotPixelResult( ref, cam, par, dmX, allD, N_lin, Rt_lin, u, ...
-                     Seg1, Seg2, Seg3, Seg4, Seg5, Seg6, cam.Iold{1}, cam.Iold{2}, colors);
-  else
-    plotPixelResult( ref, cam, par, dmX, allD, N_lin, Rt_lin, u, Seg1, Seg2, Seg3, Seg4, colors );
+  if  plotresults == 1
+    Seg1=Seg;Seg1.Img = int32(allSolutions(:,:,1));Seg2=Seg;Seg2.Img = int32(allSolutions(:,:,2));Seg3=Seg;Seg3.Img = int32(allSolutions(:,:,3));Seg4=Seg;Seg4.Img = int32(allSolutions(:,:,4));
+    % ?? PLOTTING:
+    for i=1:max(Seg1.Img(:))+1
+      Seg1.Ids{i} = find(Seg1.Img == i-1)-1;
+      Seg2.Ids{i} = find(Seg2.Img == i-1)-1;
+      Seg3.Ids{i} = find(Seg3.Img == i-1)-1;
+      Seg4.Ids{i} = find(Seg4.Img == i-1)-1;
+    end;
+    
+    if size( allSolutions, 3) > 4
+      Seg5=Seg;Seg5.Img = int32(allSolutions(:,:,5));Seg6=Seg;Seg6.Img = int32(allSolutions(:,:,6));
+    end
+    if size( allSolutions, 3) > 6
+      Seg7=Seg;Seg7.Img = int32(allSolutions(:,:,7));Seg8=Seg;Seg8.Img = int32(allSolutions(:,:,8));
+    end
+    
+    if exist('Seg5','var') && isfield(cam,'Iold') % exist('ref_inv','var')
+      plotPixelResult( ref, cam, par, dmX, allD, N_lin, Rt_lin, u, ...
+        Seg1, Seg2, Seg3, Seg4, Seg5, Seg6, cam.Iold{1}, cam.Iold{2}, colors);
+    else
+      plotPixelResult( ref, cam, par, dmX, allD, N_lin, Rt_lin, u, Seg1, Seg2, Seg3, Seg4, colors );
+    end
   end
-end
-if plotFinal==1
-  plotAnalysis(ref, cam(1), N_linM, Rt_linM, SegNew, u, 10, par, 0, sprintf('%03d_perPixel', par.imgNr));
-end
-
-fprintf('Seg\n Energy: %.2f; \n non-sub: %.2f, \n non-sol: %.2f, \n allNodes: %.2f, \n all_Edges: %.2f, \n nRuns: %.2f\n, non-sub pct: %.2f\n, non-sol pct: %.2f\n', ...
-  energyInfo(1), energyInfo(2), energyInfo(3), energyInfo(4), energyInfo(5), energyInfo(6), energyInfo(2)/energyInfo(5)*100, energyInfo(3)/energyInfo(5)*100 );
-
-fprintf('Pix\n Energy: %.2f; \n non-sub: %.2f, \n non-sol: %.2f, \n allNodes: %.2f, \n all_Edges: %.2f, \n nRuns: %.2f\n, non-sub pct: %.2f\n, non-sol pct: %.2f\n', ...
-  energyInfoPix(1), energyInfoPix(2), energyInfoPix(3), energyInfoPix(4), energyInfoPix(5), energyInfoPix(6), energyInfoPix(2)/energyInfoPix(5)*100, energyInfoPix(3)/energyInfoPix(5)*100 );
-
-energystr = sprintf('Energy: %.2f\nnon-sub: %.2f\nnon-sol: %.2f\nallNodes: %.2f\nall_Edges: %.2f\nnRuns: %.2f\nnon-sub-pct: %.2f\nnon-sol-pct: %.2f\n', ...
-  energyInfo(1), energyInfo(2), energyInfo(3), energyInfo(4), energyInfo(5), energyInfo(6), energyInfo(2)/energyInfo(5)*100, energyInfo(3)/energyInfo(5)*100 );
-
-energystr = sprintf('%sEnergy: %.2f\nnon-sub: %.2f\nnon-sol: %.2f\nallNodes: %.2f\nall_Edges: %.2f\nnRuns: %.2f\nnon-sub-pct: %.2f\nnon-sol-pct: %.2f\n', ...
-  energystr, energyInfoPix(1), energyInfoPix(2), energyInfoPix(3), energyInfoPix(4), energyInfoPix(5), energyInfoPix(6), energyInfoPix(2)/energyInfoPix(5)*100, energyInfoPix(3)/energyInfoPix(5)*100 );
+  if plotFinal==1
+    plotAnalysis(ref, cam(1), N_linM, Rt_linM, SegNew, u, 10, par, 0, sprintf('%03d_perPixel', par.imgNr));
+  end
+  
+  fprintf('Seg\n Energy: %.2f; \n non-sub: %.2f, \n non-sol: %.2f, \n allNodes: %.2f, \n all_Edges: %.2f, \n nRuns: %.2f\n, non-sub pct: %.2f\n, non-sol pct: %.2f\n', ...
+    energyInfo(1), energyInfo(2), energyInfo(3), energyInfo(4), energyInfo(5), energyInfo(6), energyInfo(2)/energyInfo(5)*100, energyInfo(3)/energyInfo(5)*100 );
+  
+  fprintf('Pix\n Energy: %.2f; \n non-sub: %.2f, \n non-sol: %.2f, \n allNodes: %.2f, \n all_Edges: %.2f, \n nRuns: %.2f\n, non-sub pct: %.2f\n, non-sol pct: %.2f\n', ...
+    energyInfoPix(1), energyInfoPix(2), energyInfoPix(3), energyInfoPix(4), energyInfoPix(5), energyInfoPix(6), energyInfoPix(2)/energyInfoPix(5)*100, energyInfoPix(3)/energyInfoPix(5)*100 );
+  
+  energystr = sprintf('Energy: %.2f\nnon-sub: %.2f\nnon-sol: %.2f\nallNodes: %.2f\nall_Edges: %.2f\nnRuns: %.2f\nnon-sub-pct: %.2f\nnon-sol-pct: %.2f\n', ...
+    energyInfo(1), energyInfo(2), energyInfo(3), energyInfo(4), energyInfo(5), energyInfo(6), energyInfo(2)/energyInfo(5)*100, energyInfo(3)/energyInfo(5)*100 );
+  
+  energystr = sprintf('%sEnergy: %.2f\nnon-sub: %.2f\nnon-sol: %.2f\nallNodes: %.2f\nall_Edges: %.2f\nnRuns: %.2f\nnon-sub-pct: %.2f\nnon-sol-pct: %.2f\n', ...
+    energystr, energyInfoPix(1), energyInfoPix(2), energyInfoPix(3), energyInfoPix(4), energyInfoPix(5), energyInfoPix(6), energyInfoPix(2)/energyInfoPix(5)*100, energyInfoPix(3)/energyInfoPix(5)*100 );
 
 energystr = sprintf('%sUniqueMVP: %.2f\n', energystr, numel(unique(SegNew.Img)) );
 

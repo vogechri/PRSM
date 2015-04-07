@@ -1,22 +1,29 @@
-%%% demonstration function, reads kitti images and delivers error measures
+%%% Demonstration function, reads kitti images and delivers error measures
 %%% and if storeOutput == 1 stores the results in the folder storeFolder
 %%% To run on other input data please change/modifiy the function
 %%% loadKittiFlow. As a sceneflow method the code needs the calibration of
 %%% the cameras besides the image data, thus such a function loading the 
 %%% data was prefered.
 %%% 
-%%% please read through the comments directly below to receive an
+%%% Please read through the comments directly below to receive an
 %%% explanation of the paramters. The image data is encoded by scene-number: imgNr
 %%% and by frame number: subImg.
-%%% please note that consecutive images in time are assumed to have
+%%% Please note that consecutive images in time are assumed to have
 %%% consecutive subImg numbers. The three frame method assumes computes
 %%% a solution for the middle frame and assumes the past and next frames to
 %%% exist. Further to reuse proposals from the previous solution the
 %%% function must have been run on the frame number before. 
-%%% Three frames can be turned off by setting p.use3Frames   = false; below
+%%% Three frames can be turned off by setting p.use3Frames = false; below.
 %%%
+%%% returns the 2d scene flow: disparity and flow and disparity difference
+%%%
+%%% dt: data-weight, ds: smooth-weight (\lambda), ts: relative motion smoothness
+%%% dj,tj: cutoff smoothness in pixel (eta); ps: per pixel patchsize: N_s;
+%%% oob: theta_oob; lr: local replacement: on/off; re: refinement on/off
+%%% segWeight (mu); pseg,pjit,pego iccv13 precomputation on/off
+%%% as: theta_oob/occ; tp: theta_mvp; ots: tolerated distance (epsilon)
 function flow2d = run_pwrs_red(imgNr, storeFolder, subImg, ...
- dt, ds, ts, dj, tj, ps, oob, infoFileName, testing, segWeight, pseg, pjit, pego, as, tp, ots )
+ dt, ds, ts, dj, tj, ps, oob, infoFileName, lr, re, testing, segWeight, pseg, pjit, pego, as, tp, ots )
 
 %example: pic 138
 %run_pwrs_red( [138], './2Frames/', 10, 0.4, 0.045, 1.0, 20, 20, 25 );
@@ -68,8 +75,11 @@ p.segWeight    = 0.1; % default 0.1: segmentation weight (mu in journal)
 p.autoScale  = 0.75; % occlusion/out-of-bounds penalty (+0.1) default 0.7 or 0.75 -- so 0.7+0.1 == 0.8 == maxdata*0.5
 p.vcPottsSeg = 0.15; % theta_mvp on segment level, default 0.15 or 0.1
 p.vcPottsPix = 0.25; % theta_mvp on pixel level, default 0.25 
-p.vcEpsSeg   = 0.15;   % epsilon in vc data term on segment level, default 0.15 or 0.1
-p.vcEpsPix   = 0.015;  % epsilon in vc data term on pixel level, default 0.15 or 0.1
+p.vcEpsSeg   = 0.15; % epsilon in vc data term on segment level, default 0.15 or 0.1
+p.vcEpsPix   = 0.015;% epsilon in vc data term on pixel level, default 0.15 or 0.1
+
+p.locRep=1;% optional : naive local replacement for view-consistent implementation;
+p.refine=0;% optional : hierarchical refinement
 
 p.doSeg=0; % do pwrsf (iccv13, basic) for preprocessing leads to a reduction of proposals
 p.doJit=0; % do 'local replacement' (iccv13 or journal for reference) for preprocessing
@@ -140,6 +150,12 @@ end
 if exist('dt', 'var')
   p.dt = dt;
 end
+if exist('lr', 'var')
+p.locRep = lr;
+end
+if exist('re', 'var')
+p.refine = re;
+end
 p.frames = 0;
 
 global flow2DGt;
@@ -184,7 +200,7 @@ for testImg_ = 1:numel(testImages)
   for subImg_ = 1:numel(subImages)
     p.subImg = subImages(subImg_ );
  
-% can sometimes be unwanted:
+% can sometimes be unwanted, prevents from overwriting results:
 %    if exist( sprintf('%s/RESULTS_K%03d_%02d_%s.txt', p.sFolder, p.imgNr, p.subImg, date), 'file' )
 %      continue;
 %    end
@@ -193,7 +209,8 @@ for testImg_ = 1:numel(testImages)
     if doKitti
       [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadKittiFlow(dataFolder , p.imgNr, p);
     else
-      % room to load your data:
+      % room to load your data: flow2DGt and flow2DGt_noc can be set to
+      % zeros if no GT is available; or set doKittiErrors to 0;
     end
     p.imageName = imageName;
     
