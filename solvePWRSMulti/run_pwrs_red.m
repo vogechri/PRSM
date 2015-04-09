@@ -206,7 +206,7 @@ for testImg_ = 1:numel(testImages)
 %      continue;
 %    end
     
-    doKitti     = 1;
+    doKitti = 1;
     if doKitti
       [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadKittiFlow(dataFolder , p.imgNr, p);
     else
@@ -225,7 +225,7 @@ for testImg_ = 1:numel(testImages)
     % function provides proposals by variational flow/stereo, SGM, other methods can be used (also additionally)
     if doKitti
       % generating initial proposals from precomputed initial solutions
-%      [N_prop, RT_prop, oracle] = generateProposals_load(p, cam, ref, Seg );
+      % [N_prop, RT_prop, oracle] = generateProposals_load(p, cam, ref, Seg );
 
     if ~exist( sprintf( '%s/PropSolution%03d_%02d.mat', pFolder, p.imgNr, p.subImg), 'file');
       [N_prop, RT_prop, oracle]  = generateProposals(p, cam, ref, Seg );

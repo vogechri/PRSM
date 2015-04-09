@@ -13,13 +13,17 @@ dataterm = 2;% 1:CENSUS  2:CSAD 0: SAD
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if flowstereo2d
-  % could be parallel:
+  % should be parallel:
   stereoT_2d = TGV_flow( 1.25/255, 9.3333, warps, pyrscale, ref.I(1).I, cam.I(1).I, innerIts, 2, 1, 1);stereoT_2d = stereoT_2d(:,:,1);
-  flowL_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, innerIts, 2, dataterm, 0);
   if par.computeRflow
-    flowR_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, cam.I(1).I, cam.I(2).I, innerIts, 2, dataterm, 0);
+    [flowL_2d, flowR_2d] = TGV_flowDouble( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, cam.I(1).I, cam.I(2).I, innerIts, 2, dataterm, 0);
+    % alternatively:
+%    flowR_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, cam.I(1).I, cam.I(2).I, innerIts, 2, dataterm, 0);
+%    flowL_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, innerIts, 2, dataterm, 0);
+  else
+    flowL_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, innerIts, 2, dataterm, 0);
   end
-  
+
   if par.computeRflow
     [N_lin, Rt_lin] = initSeg_2dFlowTest(ref, cam, Seg, stereoT_2d, stereoT_2d, flowL_2d, flowR_2d, 1, par.fitSegs);
   else
@@ -70,9 +74,14 @@ if flowstereo2d_SGM
     stereoT_2d = -getDisparitySGM_proposal(cam, ref, 0*ones(size(ref.I(1).I)), 0, 160, 3, 100 );
   else
     stereoT_2d = -getDisparitySGM_proposal(cam, ref, 0*ones(size(ref.I(1).I)), 0, 160, 3, 100 );
-    flowL_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, innerIts, 2, dataterm, 0);
+
     if par.computeRflow
-      flowR_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, cam.I(1).I, cam.I(2).I, innerIts, 2, dataterm, 0);
+      [flowL_2d, flowR_2d] = TGV_flowDouble( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, cam.I(1).I, cam.I(2).I, innerIts, 2, dataterm, 0);
+    % alternatively: 
+%      flowR_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, cam.I(1).I, cam.I(2).I, innerIts, 2, dataterm, 0);
+%      flowL_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, innerIts, 2, dataterm, 0);      
+    else
+      flowL_2d   = TGV_flow( 1.25/255, 12.333, warps, pyrscale, ref.I(1).I, ref.I(2).I, innerIts, 2, dataterm, 0);
     end
   end
   
@@ -92,10 +101,13 @@ if flowstereo2d_SGM
     [N_lin, Rt_lin] = initSeg_2dFlowTest(ref, cam, Seg, stereoT_2d, stereoT_2d, flowL_2d, flowL_2d, 0, par.fitSegs);
   end
   
-  fprintf('full2d-SGM\n');
-  [oErr, noErr] = getKittiErrSF ( stereoT_2d(:,:,1), flowL_2d(:,:,1), flowL_2d(:,:,2) );
-  fprintf('full2d-SGM - lpFit\n');
-  [oErr, noErr] = getKittiErr3dSF ( Seg, ref, cam, N_lin, Rt_lin );
+  global doKittiErrors;
+  if doKittiErrors
+    fprintf('full2d-SGM\n');
+    [oErr, noErr] = getKittiErrSF ( stereoT_2d(:,:,1), flowL_2d(:,:,1), flowL_2d(:,:,2) );
+    fprintf('full2d-SGM - lpFit\n');
+    [oErr, noErr] = getKittiErr3dSF ( Seg, ref, cam, N_lin, Rt_lin );
+  end 
   
   N_prop  = cat( 2, N_prop,  N_lin);
   RT_prop = cat( 3, RT_prop, Rt_lin);
