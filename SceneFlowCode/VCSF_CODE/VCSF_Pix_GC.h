@@ -193,7 +193,9 @@ Scalar getSmoothnessEnergy( std::vector< EvalEnergyFullFramePixel<Scalar> >& eva
       i10 ? dsgX[qid10]->getvHoms() : dsgX[qid10]->getviHoms(), 
       i11 ? dsgX[qid11]->getvHoms() : dsgX[qid11]->getviHoms() );
     allSmoothScore += SmoothScore;
+#ifdef _writeEnergies_
     printf("cam/time (%d,%d) smooth Score: %.2f\n", ct[0], ct[1], SmoothScore*lambda);
+#endif
   }
   return allSmoothScore;
 }
@@ -460,7 +462,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
         printf("outOfBoundsThresh %.2f \n", outOfBoundsThresh);
         printf("data thresh %.2f \n", thresh);
         printf("motion smooth theta %.2f \n", theta);
-        printf("general smoothness lambda %.2f \n", lambda);
+        printf("general smoothness lambda %.3f \n", lambda);
         printf("segWeight %.2f \n", segWeight);
         printf("ot:%.3f, tempPotts:%.3f autoIntern: %.1f\n", ot, tempPotts, doAuto );
 
@@ -483,10 +485,10 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
         printf("nCenters   %d \n", nCenters );
         printf("nSolutions %d \n", nSolutions);
 
-        printf("MUST BE EQUAL - nSolutions: %d, nCenters: %d \n", nSolutions, nCenters);
+//        printf("MUST BE EQUAL - nSolutions: %d, nCenters: %d \n", nSolutions, nCenters);
 
         // whatever, the variable is not really used
-        int nSegments = 5000;//(int) (mxGetM(Segments) * mxGetN(Segments));// its a cell assigning a segment to its pixel involved
+        int nSegments = 8000;//(int) (mxGetM(Segments) * mxGetN(Segments));// its a cell assigning a segment to its pixel involved
 
         //      printf ("nSegments %d, nProposals %d, nNormals %d \n", nSegments, nSolutions, nNormals);
         //  mexEvalString("drawnow");
@@ -692,11 +694,14 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
         centers = (Scalar*) (&(propCenters[0]));nCenters = propCenters.size()/3;
 
         int maxVariables = (2*patchX-5)*(2*patchY-5);
+#ifdef _writeEnergies_
         printf("maxVariables before: %d - ", maxVariables);
+#endif
         for (int i =0; i < patchXY.size(); i++)
           maxVariables = max( ((2*patchXY[i][0]-5)*(2*patchXY[i][1]-5) ) , maxVariables); 
+#ifdef _writeEnergies_
         printf("maxVariables after : %d\n", maxVariables);
-
+#endif
         for (int i =0;i<dsgX.size(); i++)
         {
           Datasegments<Scalar>::P4i ct_ct = dsgX[i]->getTimeCam();
@@ -805,7 +810,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
         int non_sol = 0;
         int old_non_sol = 0;
 
-        int multiplierVar = dataCams.size()*(14./4.);
+        int multiplierVar = dataCams.size()*(16./4.);
 
         int maxNodes = multiplierVar*maxVariables; // how much larger can those become???
         int numEdges = 6*maxNodes;// 8 neighboorhood, double counting
@@ -867,6 +872,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
             for (int k=0; k<dsg_data.size();k++)
               dsgX[ dsg_data[k] ]->updateAutoScoresPix();
 
+#ifdef _writeEnergies_
           std::vector<Scalar> dataEnergies(dsg_data.size(),0);
           for (int k=0; k<dsg_data.size();k++)
           {
@@ -886,6 +892,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
           for (int k=0; k<dataEnergies.size();k++)
             printf("%.2f ", dataEnergies[k]);
           printf(" )\n");
+#endif
 
           order = unknowns;
           unknowns.clear();
@@ -948,7 +955,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
                 if ( pid >= numThreads)
                 {
-                  printf("TOTAL nonsense error %d,%d \n", pid, numThreads);
+                  printf("Warning: process id:%d > number of threads:%d \n", pid, numThreads);
                   ord = order.size();
 #ifdef WIN32
                   Sleep( 20 );
@@ -1084,7 +1091,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
                 assert (maxNodes >= nVars && numEdges >= nEdges );
                 if (maxNodes < nVars || numEdges < nEdges ) // insufficient memory:
                 {
-                  printf("\n\n\n violation %5d,%5d edges: %6d,%6d: \n\n\n\n", maxNodes, nVars, numEdges, nEdges );
+                  printf("\nWarning violation: %5d,%5d edges: %6d,%6d: \n\n\n\n", maxNodes, nVars, numEdges, nEdges );
                   //mexEvalString("drawnow");
                 }
 
@@ -1112,7 +1119,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
                 ////////////////////////
                 if (pid >= numThreads) // THOU SHALL NOT PASS
                 {
-                  printf("not in range of numThreads: %d, %d", pid, numThreads);
+                  printf("Warning: pid: %d not in range of # numThreads: %d", pid, numThreads);
                   varNr = 0;
                 }
 
@@ -1178,6 +1185,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
         std::clock_t stopP3(std::clock());
         printf("QPBO took %.2f\n", double(stopP3-startP3)/CLOCKS_PER_SEC );
 
+#ifdef _writeEnergies_
         printf("ords processed : %d\n", pidOrd.size() );
 
 #pragma omp parallel for
@@ -1186,7 +1194,9 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
           Datasegments<Scalar>::P4i ct_ct = dsgX[dsg_data[k]]->getTimeCam();
           dsgX[ dsg_data[k] ]->buildFromCurrentSolutionPixel( );
         }
+#endif
 
+#ifdef _writeEnergies_
         std::vector<Scalar> dataEnergiesNew( dsg_data.size(), 0 );
         for (int k=0; k<dsg_data.size(); k++)
         {
@@ -1196,28 +1206,36 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
           printf("End Energy:%.2f time:%d cam:%d <-> time:%d cam:%d\n", endE, ct_ct[1], ct_ct[0], ct_ct[3], ct_ct[2]);
         }
         Scalar sumDataEMulti = std::accumulate(dataEnergiesNew.begin(),dataEnergiesNew.end(),0.);
-
         printf("ENERGY: %.2f  NON submodularity detected %d (%.2f pct), no solutions: %d (%.2f pct); \n", sumDataEMulti, non_sub, double(100*non_sub)/avEdgesUsed, non_sol, double(100*non_sol)/avNodesUsed);
         printf("av/max Nodes :%d/%d, av/max Edges: %d/%d \n", avNodesUsed/nRuns, maxNodesUsed, avEdgesUsed/nRuns, maxEdgesUsed);
+        Scalar allSmoothScore = getSmoothnessEnergy(evalSmooth, smoothCams, dsgId, nCams, nTimeSteps, dsgX, lambda );
+        printf("ENERGY: %.2f = sum(Data+smooth) :%.2f + %.2f \n", sumDataEMulti + lambda * allSmoothScore, sumDataEMulti, lambda * allSmoothScore);
+#endif
 
         // debugging - i need the following outputs:
         // where are the imppenalties? and where the non-subs?!
+        if (nlhs > 3)
         {
+#ifndef _writeEnergies_
           Scalar allSmoothScore = getSmoothnessEnergy(evalSmooth, smoothCams, dsgId, nCams, nTimeSteps, dsgX, lambda );
-          printf("ENERGY: %.2f = sum(Data+smooth) :%.2f + %.2f \n", sumDataEMulti + lambda * allSmoothScore, sumDataEMulti, lambda * allSmoothScore);
-          if (nlhs > 3)
+          std::vector<Scalar> dataEnergiesNew( dsg_data.size(), 0 );
+          for (int k=0; k<dsg_data.size(); k++)
           {
-            mwSize dims[2];
-            dims[0] = 1;
-            dims[1] = 6;
-            plhs[3] = mxCreateNumericArray(2, dims, mxDOUBLE_CLASS, mxREAL);
-            Scalar* outputI = (Scalar*) mxGetPr(plhs[3]);
-            outputI[0] = sumDataEMulti + lambda * allSmoothScore; 
-            outputI[1] = non_sub; outputI[2] = non_sol; 
-            outputI[3] = avNodesUsed; outputI[4] = avEdgesUsed; outputI[5] = nRuns;
+            Datasegments<Scalar>::P4i ct_ct = dsgX[dsg_data[k]]->getTimeCam();
+            Scalar endE = dsgX[ dsg_data[k] ]->getEnergyPixel();
+            dataEnergiesNew[k] = endE;
           }
+          Scalar sumDataEMulti = std::accumulate(dataEnergiesNew.begin(),dataEnergiesNew.end(),0.);
+#endif
+         mwSize dims[2];
+         dims[0] = 1;
+         dims[1] = 6;
+         plhs[3] = mxCreateNumericArray(2, dims, mxDOUBLE_CLASS, mxREAL);
+         Scalar* outputI = (Scalar*) mxGetPr(plhs[3]);
+         outputI[0] = sumDataEMulti + lambda * allSmoothScore; 
+         outputI[1] = non_sub; outputI[2] = non_sol; 
+         outputI[3] = avNodesUsed; outputI[4] = avEdgesUsed; outputI[5] = nRuns;
         }
-
 
         // -- put all in one !!!
         if (nlhs > 1)
@@ -1269,9 +1287,9 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
           {
             Datasegments<Scalar>::P4i ct_ct = dsgX[dsg_data[k]]->getTimeCam();
             dsgX[ dsg_data[k] ]->getEnergyMapPixel( dataEnergyMap, dataEnergyMap2 );
-
+#ifdef _writeEnergies_
             printf("Data plot order: ct_ct: %d, %d -> %d, %d \n", ct_ct[0], ct_ct[1], ct_ct[2], ct_ct[3] );
-
+#endif
             // (segImg[ct_ct[1]][ct_ct[0]])
             for (int i=0;i < N*M; i++)
               outputI[i+    2*k*N*M] = dataEnergyMap [i];
@@ -1279,6 +1297,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
               outputI[i+N*M+2*k*N*M] = dataEnergyMap2[i];
           }
         }
+
         if (nlhs > 0)
         {
           mwSize dims[3];

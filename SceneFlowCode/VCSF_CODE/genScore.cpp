@@ -781,7 +781,7 @@ void genScore<Scalar>::
   {
     int yi = i%Nstep;
     int xi = i/Nstep;
-    printf("Impossible: i:%d - yi*Mstep + xi, Nstep %d, Mstep %d, Nstep*Mstep%d, gidX%d, gidY%d, xi%d,yi%d\n", i, yi*Mstep + xi, Nstep, Mstep, Nstep*Mstep, gId/N, gId%N, xi, yi);
+    printf("Warning: i:%d - yi*Mstep + xi, Nstep %d, Mstep %d, Nstep*Mstep%d, gidX%d, gidY%d, xi%d,yi%d\n", i, yi*Mstep + xi, Nstep, Mstep, Nstep*Mstep, gId/N, gId%N, xi, yi);
     return;
   }
 
@@ -808,7 +808,7 @@ void genScore<Scalar>::
       int nid = i+dx[j]*Nstep+dy[j];//afteer
 
       if (nid<0 || nid> Nstep*Mstep)
-        printf("Impossible: nid%d - (yi+dy[j])*Mstep + xi+dx[j]%d, Nstep %d, Mstep %d, Nstep*Mstep%d, gidX%d, gidY%d, xi%d,yi%d, dx%d,dy%d\n", nid, (yi+dy[j])*Mstep + xi+dx[j], Nstep, Mstep, Nstep*Mstep, gId/N, gId%N, xi, yi, dx[j], dy[j]);
+        printf("Warning: nid%d - (yi+dy[j])*Mstep + xi+dx[j]%d, Nstep %d, Mstep %d, Nstep*Mstep%d, gidX%d, gidY%d, xi%d,yi%d, dx%d,dy%d\n", nid, (yi+dy[j])*Mstep + xi+dx[j], Nstep, Mstep, Nstep*Mstep, gId/N, gId%N, xi, yi, dx[j], dy[j]);
       else
         if ( censusScore_short (img0_a[nid]-i0_a, img0_b[nid]-i0_b, Repsi[ww[j]-1]) )
           score++;

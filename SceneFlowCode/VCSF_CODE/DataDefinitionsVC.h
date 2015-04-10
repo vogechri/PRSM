@@ -44,7 +44,9 @@ License along with this software.*/
 #define _withoutCuttingImprobable_
 // commenting this leads to smaller expansion graphs constructed
 
-
+/// create debug output: energies, etc
+//#define _writeEnergies_
+//#define _writeDebugOut_
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////

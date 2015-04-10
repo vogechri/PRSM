@@ -396,30 +396,38 @@ void
 
               if (box1[2] > int (max ( fail1[0], fail2[0] )))
               {
+#ifdef _writeDebugOut_
                 printf("----- CUTTING ---- \n");
                 printf("box 2 min: %d %d\n", box1[2], int (max ( fail1[0], fail2[0] )));
 
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[3], 1)|normal));
+#endif
                 box1[2] = min( box1[2], int (max ( fail1[0], fail2[0] )) );
+#ifdef _writeDebugOut_
                 printf("Depth: %.2f\n", 1./(P3(fail1[0], fail1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[3], 1)|normal));
+#endif
               }
             }
             else
             {
               if (box1[0] < int (min ( fail1[0], fail2[0] )))
               {
+#ifdef _writeDebugOut_
                 printf("--- CUTTING --- \n");
                 printf("box 0 max: %d %d\n", box1[0], int (min ( fail1[0], fail2[0] )));
 
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[3], 1)|normal));
+#endif
                 box1[0] = max( box1[0], int (min ( fail1[0], fail2[0] )) );
+#ifdef _writeDebugOut_
                 printf("Depth: %.2f\n", 1./(P3(fail1[0], fail1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[3], 1)|normal));
+#endif
               }
             }
           }
@@ -432,15 +440,19 @@ void
             {
               if (box1[3] > int (max ( fail1[1], fail2[1] )))
               {
+#ifdef _writeDebugOut_
                 printf("--- CUTTING --- \n");
                 printf("box 3 min: %d %d\n", box1[3], int (max ( fail1[1], fail2[1] )));
 
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[3], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[3], 1)|normal));
+#endif
                 box1[3] = min( box1[3], int (max ( fail1[1], fail2[1] ) ));
+#ifdef _writeDebugOut_
                 printf("Depth: %.2f\n", 1./(P3(fail1[0], fail1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[3], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[3], 1)|normal));
+#endif
               }
             }
             else
@@ -448,15 +460,19 @@ void
 
               if (box1[1] < int (min ( fail1[1], fail2[1] )))
               {
+#ifdef _writeDebugOut_
                 printf("--- CUTTING --- \n");
                 printf("box 1 max: %d %d\n", box1[1], int (min ( fail1[1], fail2[1] )));
 
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[1], 1)|normal));
+#endif
                 box1[1] = max( box1[1], int (min ( fail1[1], fail2[1] ) ));
+#ifdef _writeDebugOut_
                 printf("Depth: %.2f\n", 1./(P3(fail1[0], fail1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[0], box1[1], 1)|normal));
                 printf("Depth: %.2f\n", 1./(P3(box1[2], box1[1], 1)|normal));
+#endif
               }
             }
           }
@@ -489,8 +505,9 @@ void
   prop2Plane = new_prop2Plane;
   nProposalExpansions = prop2Plane.size();
 
+#ifdef _writeDebugOut_
   printf("Reduced nProposals: %d,  \n", nProposalExpansions);
-
+#endif
 }
 
 
@@ -788,7 +805,9 @@ initNewSeg( int propId, int proposal, int boxX, int boxY, genHomoG<Scalar>* gHom
   if ( (maxX-minX)*(maxY-minY) > 0 && (maxX-minX)*(maxY-minY) > (boxX*2+1)*(boxY*2+1)*resizer*resizer )
   {
     /// center maps to :
+#ifdef _writeDebugOut_
     printf("Fixed Box: before %.1f>%.1f  (minX,maxX,..)  %.1f,%.1f,%.1f,%.1f ", (maxX-minX)*(maxY-minY), (boxX*2+1)*(boxY*2+1)*resizer*resizer, minX, maxX, minY, maxY );
+#endif
 
     // 1.st plot depth's of 4 points:
     //Scalar dc  = 1./(noms_pix [proposal]  | P3(pc_proj[0], pc_proj[1], 1.));
@@ -805,7 +824,9 @@ initNewSeg( int propId, int proposal, int boxX, int boxY, genHomoG<Scalar>* gHom
     maxX = max(maxX , minX );minX = min(maxX , minX );
     maxY = max(maxY , minY );minY = min(maxY , minY );
 
+#ifdef _writeDebugOut_
     printf("After: %.1f. center:%.1f  %.1f | (minX,maxX)  %.1f,%.1f,%.1f,%.1f\n", (maxX-minX)*(maxY-minY), pc_proj[0], pc_proj[1], minX, maxX, minY, maxY);
+#endif
     //mexEvalString("drawnow");
   }
   minX =    floor(minX/gridSize) *gridSize;
@@ -1457,7 +1478,9 @@ void
     currentSolutionE.freeFW.push_back( resV[ (currentSolutionE.seg2segFW)[i].first ] );
   }
 
+#ifdef _writeDebugOut_
   printf("--- Data-Error %f - %f, %d pix free\n", sumError, sumVError, sumFError);
+#endif
   sumError =0;sumVError =0;sumFError =0;
   resD = gs2.getScores();
   resF = gs2.getFreeScores();
@@ -1483,7 +1506,9 @@ void
     currentSolutionE.freedataBW.push_back( resF[ (currentSolutionE.seg2segBW)[i].first ] );
     currentSolutionE.freeBW.push_back( resV[ (currentSolutionE.seg2segBW)[i].first ] );
   }
+#ifdef _writeDebugOut_
   printf("--- Data-Error v2 %f - %f, %d pix free\n", sumError, sumVError, sumFError);
+#endif
   //      correctInFrontOfCam();
 }
 

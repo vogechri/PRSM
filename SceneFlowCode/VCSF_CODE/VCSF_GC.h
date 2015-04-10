@@ -526,9 +526,9 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 //      int patchX = 104/decreaser;// !! if too many segments storing the stuff is too expensive w.r.t. memory
 //      int patchY = 72/decreaser;
 
-	  int expPatches (Scalar(gridSize)/2.);
-  	  int patchX = gridSize * (gridSizeX+0.5);
-	  int patchY = gridSize * (gridSizeY+0.5);
+  	  int expPatches (Scalar(gridSize)/2.);
+   	  int patchX = gridSize * (gridSizeX+0.5);
+	    int patchY = gridSize * (gridSizeY+0.5);
 
       std::srand ( unsigned ( std::time(0) ) );
       //std::srand ( 555 ); // for debugging
@@ -814,7 +814,9 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
         {
           for (int k=0;k<dsgX.size();k++)
             dsgX[k]->setExpCenters (expCenters, nProposalExpansions);
+#ifdef _writeEnergies_
           printf("set extra centers \n");
+#endif
         }
         // proposals can be a segment/proposal id pair now - fit at rough resolution
         // however which normal and which position do not correlate
@@ -988,7 +990,9 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
             Datasegments<Scalar>::P4i ct_ct = dsgX[dsg_data[k]]->getTimeCam();
             Scalar endE = dsgX[ dsg_data[k] ]->getEnergy();
             dataEnergies[k] = endE;
+#ifdef _writeEnergies_
             printf("Start Energy:%.2f time:%d cam:%d <-> time:%d cam:%d\n", endE, ct_ct[1], ct_ct[0], ct_ct[3], ct_ct[2]);
+#endif
           }
           Scalar sumDataEMulti = std::accumulate(dataEnergies.begin(),dataEnergies.end(),0.);
 
@@ -1001,13 +1005,16 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
             smoothEnergies[k] = getSmoothEnergy ( currentSolutions[k/nCams][k%nCams], nSegments[k/nCams][k%nCams], evalSmooth[k], theta, lambda);
           Scalar sumSmoothEMulti = std::accumulate(smoothEnergies.begin(),smoothEnergies.end(),0.);
 
+#ifdef _writeEnergies_
           for(int kk= 0; kk< smoothEnergies.size(); kk++ )
             printf("cam/time (%d,%d) smooth Score: %.2f\n", kk/nCams, kk%nCams, smoothEnergies[kk]);
-
+#endif
           ENERGY = sumDataEMulti + sumSmoothEMulti;
+#ifdef _writeEnergies_
           printf("------------ Start Energy is %.2f --------------\n", ENERGY);
           printf("Start Energies (full=data+smooth) %.2f = ([%.2f],[%.2f,%.2f,%.2f,%.2f])\n", ENERGY, 
             sumDataEMulti, smoothEnergies[0], smoothEnergies[1], smoothEnergies[2], smoothEnergies[3] );
+#endif
 #ifdef _testLocalReplacement_
         }
 #endif
@@ -1179,7 +1186,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
                     worstSmoothScore += evalSmooth[kk].compute_score_Fuse_local( *(currentSolutionsNr[kk]), trialVecs[kk], *(seg2vars[kk]), f00,f01,f10,f11,idk,idj );
 
                   if (f00.size() > 6*nVars )
-                    printf("f00.size() %d > 6*nVars:%d\n", f00.size(), nVars*6);
+                    printf("Warning: f00.size() %d > 6*nVars:%d\n", f00.size(), nVars*6);
 
                   scale = (Scalar)(maxValue) / (lambda * (worstSmoothScore) + worstDataScore);
                   scaleSmo = scale * lambda;
@@ -1270,7 +1277,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
                     {
                       printf("Energies old:%f  (full=data+smooth) %f = (%f,%f,%f,%f),(%f,%f,%f,%f))\n", ENERGYOLD, ENERGY2, 
                         dataEnergies[0], dataEnergies[1], dataEnergies[2], dataEnergies[3], smoothEnergies[0], smoothEnergies[1], smoothEnergies[2], smoothEnergies[3]);
-                      mexEvalString("drawnow");
+//                      mexEvalString("drawnow");
                     }
                     ENERGYOLD = ENERGY2;
                   }
@@ -1306,18 +1313,22 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
                 smoothEnergies[k] = getSmoothEnergy ( currentSolutions[k/nCams][k%nCams], nSegments[k/nCams][k%nCams], evalSmooth[k], theta, lambda);
               Scalar smoothEnergy = std::accumulate(smoothEnergies.begin(),smoothEnergies.end(),0.);
 
+#ifdef _writeEnergies_
 #ifndef _testLocalReplacement_
               for(int kk= 0; kk< smoothEnergies.size(); kk++ )
                 printf("cam/time (%d,%d) smooth Score: %.2f\n", kk/nCams, kk%nCams, smoothEnergies[kk]);
+#endif
 #endif
 
               OLD_ENERGY = ENERGY;
               ENERGY = dataEnergy + smoothEnergy;
 
+#ifdef _writeEnergies_
 #ifdef _SumViewSmoothing_
               printf("Energies (full=data+smooth) %.2f = (%.2f,(%.2f,%.2f,%.2f,%.2f))\n", ENERGY, dataEnergy, smoothEnergies[0], smoothEnergies[1], smoothEnergies[2], smoothEnergies[3]);
 #else
               printf("Energies (full=data+smooth) %f = (%f,%f)\n", ENERGY, dataEnergy, smoothEnergies[0] );
+#endif
 #endif
             }
 
@@ -1338,9 +1349,11 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
           }
 #endif
 
+#ifdef _writeEnergies_
           //  printf("ENERGY: %f  NON submodularity detected %d, no solutions: %d\n", ENERGY, non_sub, non_sol);
           printf("ENERGY: %.2f  NON submodularity detected %d (%.2f pct), no solutions: %d (%.2f pct); \n", ENERGY, non_sub, double(100*non_sub)/std::max(1,avEdgesUsed), non_sol, double(100*non_sol)/std::max(1,avNodesUsed));
           printf("av/max Nodes :%d/%d, av/max Edges: %d/%d \n", avNodesUsed/std::max(1,nRuns), maxNodesUsed, avEdgesUsed/std::max(1,nRuns), maxEdgesUsed);
+#endif
 
           if (nlhs > 0)
           {
@@ -1448,14 +1461,18 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
             outputI[3] = avNodesUsed; outputI[4] = avEdgesUsed; outputI[5] = nRuns;
           }
 
+#ifdef _writeEnergies_
           for (int k=0; k<dsg_data.size();k++)
           {
             Datasegments<Scalar>::P4i ct_ct = dsgX[dsg_data[k]]->getTimeCam();
             Scalar endE = dsgX[ dsg_data[k] ]->getEnergy();
             printf("Data Energy:%.2f time:%d cam:%d <-> time:%d cam:%d\n", endE, ct_ct[1], ct_ct[0], ct_ct[3], ct_ct[2]);
           }
+#endif
 
           enStore.flipNormals();
+
+#ifdef _writeEnergies_
 #pragma omp parallel for
           for (int k=0; k<dsg_data.size();k++)
           {
@@ -1469,7 +1486,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
             Scalar endE = dsgX[ dsg_data[k] ]->getEnergy();
             printf("Data Energy:%.2f time:%d cam:%d <-> time:%d cam:%d\n", endE, ct_ct[1], ct_ct[0], ct_ct[3], ct_ct[2]);
           }
-
+#endif
           for( int i=0;i<dsgX.size();i++)
             delete dsgX[i];
 

@@ -1,50 +1,17 @@
 % delivers errors on whole dataset reading the output files from a folder1
 % and folder2 -- see run_pwrs_red parameter: storeFolder
-function fullResult= evalSceneFlowKittiFolderThesis ( )
+function fullResult= evalSceneFlowKittiFolder ( )
 
 compareGT = 0;
 numList = 0:193;
 
-
-folder1 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2fp_lsaux_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_r5';
-folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2f_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn8_r4';
-
-folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2fp_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_8910';
-%folder1 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2fp_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_8910_again';
-
-folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2fp_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn';
-folder1 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_3f_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_again';
-folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2f_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_again';
-
-folder1 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\PreFinal_Auto1_refx1_2f_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn8_r4_nored';
-folder1 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2f_s05_S0J0E0_sw01_as075_tp015_ots015_mcOn_again_reduced'; % 1k only
-%folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2f_s05_S0J0E0_sw01_as075_tp015_ots015_mcOn_again_reducedProps1k05k';
-%folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2f_s05_S0J0E0_sw01_as075_tp015_ots015_mcOn_again_reducedProps18k';
-
-folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_3fps_s05_S0J0E0_sw01_as075_tp015_ots015_mcOn_reducedProps1k';
-folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_3fps_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_reducedProps1k';
-% that is again 1k proposals -- lol
-folder1 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_3fps_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_reducedProps17k';
-%folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_3f_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_again';
-
-% epe? lacks significantly pic 140 failed miserably without 1:1 the same
-folder1 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_3fps_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_reducedProps17ks';
-
-%folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2fp_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_8910';
-folder2 = 'C:\Users\vogechri\Desktop\work\init\VCGIT\Auto1_refx1_2fp_s045_S0J0E0_sw01_as075_tp015_ots015_mcOn_8910_again';
-
+folder2 = '../test1/';
+folder1 = '../test2/';
 
 doDifference = 2;
 
 % disable certain images:
-%  [a,b] = find(numList == 181);numList(b) = [];
-%  [a,b] = find(numList == 140);numList(b) = [];
-%  [a,b] = find(numList == 156);numList(b) = [];
-%  [a,b] = find(numList == 74);numList(b) = [];
-%  [a,b] = find(numList ==  1);numList(b) = [];
-%  [a,b] = find(numList == 8);numList(b) = [];
-%  [a,b] = find(numList == 96);numList(b) = [];
-%  [a,b] = find(numList == 141);numList(b) = [];  
+%  [a,b] = find(numList == 0);numList(b) = [];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % at 3 pixel occ/nocev
@@ -70,12 +37,7 @@ for i=1:numel(numList)
   innerF = '';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  scoreFile  = dir(fullfile(folder1, innerF, sprintf('/RESULTS%03d*.txt', numList(i)) ));  
-  
-%  scoreFile  = dir(fullfile(folder1, innerF, sprintf('/RESULTS_Init_%03d*.txt', numList(i)) ));  
-%  scoreFile  = dir(fullfile(folder1, innerF, sprintf('/RESULTS_LPL_%03d*.txt', numList(i)) ));
   scoreFile  = dir(fullfile(folder1, innerF, sprintf('/RESULTS_K%03d_10*.txt', numList(i)) ));
-%  scoreFile  = dir(fullfile(folder1, innerF, sprintf('/RESULTS_F%03d_10_*.txt', numList(i)) ));  
   fName = fullfile(folder1, innerF, scoreFile.name);
   fid = fopen ( fName );
   if fid<0
@@ -84,10 +46,7 @@ for i=1:numel(numList)
     fid = fopen ( fName );
   end 
   
-%  scoreFile2 = dir(fullfile(folder2, innerF, sprintf('/RESULTS%03d*.txt', numList(i)) ));    
-%  scoreFile2  = dir(fullfile(folder2, innerF, sprintf('/RESULTS_Rig_%03d*.txt', numList(i)) ));
   scoreFile2 = dir(fullfile(folder2, innerF, sprintf('/RESULTS_K%03d_10*.txt', numList(i)) ));
-%  scoreFile2  = dir(fullfile(folder2, innerF, sprintf('/RESULTS_F%03d_10_*.txt', numList(i)) ));  
   fName2 = fullfile(folder2, innerF, scoreFile2.name);
   fid2 = fopen ( fName2 );
   if fid2<0
@@ -108,7 +67,6 @@ for i=1:numel(numList)
     frewind(fid);
     for iiii=1:6 fgets(fid);end
     res4 = fscanf(fid, 'DispEPE %f & %f \nFlowEPE %f & %f');
-%    res4 = fscanf(fid, ' EPE %f & EPE(noc) %f');res4 = cat(1, res4(:), res4(:));
     if ~isempty(res4)
       if any(isnan(res4))
         stophere = 1;
@@ -133,7 +91,6 @@ for i=1:numel(numList)
     frewind(fid2);
     for iiii=1:6 fgets(fid2);end
     res3 = fscanf(fid2, 'DispEPE %f & %f \nFlowEPE %f & %f');
-%    res3 = fscanf(fid, ' EPE %f & EPE(noc) %f');res3 = cat(1, res3(:), res3(:));
 
     if ~isempty(res3)
       if any(isnan(res3))
@@ -172,7 +129,6 @@ for i=1:numel(numList)
       for iii = 1:4
         pos = pos + 1;
         allScores(pos,end) = res(iii,ii);
-%        allScores(pos,end) = res2(iii,ii)-res(iii,ii);
       end
     end
     %%%%%%%%%%%%%
@@ -208,20 +164,12 @@ fullResult1.*100
 fullResult2 = sum2 ./ elms2;
 fullResult2.*100
 fprintf('Elements%03d\n', elms2);
-% fprintf('%.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f\n', 100*fullResult1(:));
-% fprintf('%.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f\n', 100*fullResult2(:));
-% 
-% bestCombi = bestCombi ./ elms;
-% fprintf('%.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f & %.2f\n', 100*bestCombi(:));
 
 fprintf('%.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f\n', 100*fullResult1(:));
 fprintf('%.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f\n', 100*fullResult2(:));
 % 
 bestCombi = bestCombi ./ elms;
 fprintf('%.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f\n', 100*bestCombi(:));
-
-
-%fprintf('Occ EPE: 1:%f 2:%f   ', epeOcc./epeOHit);fprintf('Noc EPE: 1:%f 2:%f\n', epeNoc./epeNHit);
 
 endNr = min(7, numel(numList));
 [Worst5 Worst5Order] = sort(allEpe1(4,:));

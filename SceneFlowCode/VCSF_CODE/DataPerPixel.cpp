@@ -505,7 +505,9 @@ int
       p0  = HomCC * P3( &centers[3*centerId] );p0/=p0[2];
       p0[0] = int(floor(p0[0]-0.5));p0[1] = int(floor(p0[1]-0.5));
 
+#ifdef _writeDebugOut_
       printf("Fixed Box: before %.1f  (minX,maxX,..)  %.1f,%.1f,%.1f,%.1f ", (maxX-minX)*(maxY-minY), minX, maxX, minY, maxY );
+#endif
 
       minX = max (minX, (p0[0]) - resizer*boxX);
       maxX = min (maxX, (p0[0]) + resizer*boxX);
@@ -514,7 +516,9 @@ int
       maxX = max(maxX , minX );minX = min(maxX , minX );
       maxY = max(maxY , minY );minY = min(maxY , minY );
 
+#ifdef _writeDebugOut_
       printf("After: %.1f. center: [%.1f %.1f] (minX,maxX) %.1f,%.1f,%.1f,%.1f\n", (maxX-minX)*(maxY-minY), p0[0], p0[1], minX, maxX, minY, maxY);        //mexEvalString("drawnow");
+#endif
       //       printf("After: %.1f. \n", (maxX-minX)*(maxY-minY));        mexEvalString("drawnow");
       box2 = P4i (minX, minY, maxX, maxY);
     }
@@ -1208,7 +1212,9 @@ void
         if (currentSolutionE.dataFW[i] != currentSolutionE.freedataFW[i])
           currentSolutionE.freeFW[i] =0;
       }
+#ifdef _writeDebugOut_
       printf("--- Data-Error    %f - %f \n", sumError, sumVError);
+#endif
       sumError= 0; sumVError = 0;
       for (int i =0;i<currentSolutionE.dataBW.size(); i++)
       {
@@ -1216,7 +1222,9 @@ void
         if (currentSolutionE.dataBW[i] != currentSolutionE.freedataBW[i])
           currentSolutionE.freeBW[i] =0;
       }
+#ifdef _writeDebugOut_
       printf("--- Data-Error v2 %f - %f \n", sumError, sumVError);
+#endif
       //
       std::vector<M3> homsFW( dataElements.size() );
       std::vector<M3> homsBW( dataElements.size() );
