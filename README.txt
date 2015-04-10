@@ -61,9 +61,8 @@ INSTALLING & RUNNING
 1.	Download and install maxflow v3.03 from 
 	http://pub.ist.ac.at/~vnk/software.html 
 	and place it into ./SceneFlowCode.
-	Alternatively one can also
-    download and the recent version of QPBO from
-	http://pub.ist.ac.at/~vnk/software.html
+	Alternatively one can also download and the recent version of QPBO 
+	from http://pub.ist.ac.at/~vnk/software.html
 	and place it into ./cpp
 	and adjust the definition file DataDefinitionVC.h in the folder
 	SceneFlowCode/VCSF_CODE.
@@ -72,13 +71,17 @@ INSTALLING & RUNNING
 	
 2.	Start MATLAB and run compileMex.m to build the utilities binaries.
 	(This step can be omitted if you are using Windows 64 bit or Unix 64 bit.)
-	Adjust the compiler flags accordingly for your purposes (defaults should work in most cases). 
-	Additional compiler switsches can be looked up in the file DataDefinitionVC.h in the folder SceneFlowCode/VCSF_CODE.
+	Adjust the compiler flags accordingly for your purposes 
+	(defaults should work in most cases). 
+	Additional compiler switches can be looked up in the file 
+	DataDefinitionVC.h in the folder SceneFlowCode/VCSF_CODE.
 
 	
-3.	From folder solvePWRSMulti run run_pwrs_red( xx ) - example given as comment in the code.
+3.	From folder solvePWRSMulti run run_pwrs_red( xx ) - 
+	example given as comment in the code.
 
-4.	To enable plotting go to http://www.mathworks.com/matlabcentral/fileexchange/23629-export-fig
+4.	To enable plotting go to 
+	http://www.mathworks.com/matlabcentral/fileexchange/23629-export-fig
 	download the export_fig package and place it in the lowest folder
 	You can further download the sc-package from 
 	http://www.mathworks.com/matlabcentral/fileexchange/16233-sc-powerful-image-rendering
@@ -98,7 +101,7 @@ Basic usage:
 
 2. 	There are the options to run the algorithm with 3 frames. 
 	So far it is assumed that the files are given as scenenumber_frame.png 
-	as in Kitti. One can use three frames with the assumption of constant 
+	as in KITTI. One can use three frames with the assumption of constant 
 	3D velocity, 
 	option: 
 	p.use3Frames   = true; 
@@ -126,14 +129,14 @@ Basic usage:
 	and to compress the information to 1k proposals, this can be adjusted.
    
 5. 	Depending on the data set the grid size (initial super-pixel) has to be set.
-	Rule of thumb is to use ~1850 proposals per image, so for kitti we use
+	Rule of thumb is to use ~1850 proposals per image, so for KITTI we use
 	p.gridSize= 16. 
 	Other scenes might need a different parameter here, eg. 12 for 
 	smaller images. This might render the refinement step pointless.
 	In the file pwrsfMulti_simpler_v3.m the parameters
-	refineLoop   = 1;% run refining based on loop default: ON  if 16x16 grid
-	endlevel     = 8;% refinement in 2^-1 steps, so startlevel= 16, 8 , .., endlevel
-	should be set accordingly.
+	refineLoop = 1;% run refining based on loop default: ON  if 16x16 grid
+	endlevel   = 8;% refinement in 2^-1 steps, startlevel = 16, 8, .., 
+	endlevel should be set accordingly.
 	Standard is to subdivide the grid once and half the grid size and 
 	expansion area. Here endlevel = 8 ensures this in the standard setting, 
 	going from 16x16 to 8x8 superpixels. 

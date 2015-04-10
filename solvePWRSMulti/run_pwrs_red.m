@@ -86,6 +86,7 @@ p.vcPottsPix = 0.25; % theta_mvp on pixel level, default 0.25
 p.vcEpsSeg   = 0.15; % epsilon in vc data term on segment level, default 0.15 or 0.1
 p.vcEpsPix   = 0.015;% epsilon in vc data term on pixel level, default 0.15 or 0.1
 
+% for speedup disable, these 2 extension to the basic approach however deliver better results 
 p.locRep=1;% optional : naive local replacement for view-consistent implementation;
 p.refine=1;% optional : hierarchical refinement
 
@@ -217,8 +218,8 @@ for testImg_ = 1:numel(testImages)
     if doKitti
       [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadKittiFlow(dataFolder , p.imgNr, p);
     else
-      % room to load your data: flow2DGt and flow2DGt_noc can be set to
-      % zeros if no GT is available; or set doKittiErrors to 0;
+      %%%% room to load your data: flow2DGt and flow2DGt_noc can be set to
+      %%%% zeros if no GT is available; or set doKittiErrors to 0;
     end
     p.imageName = imageName;
     
@@ -230,9 +231,6 @@ for testImg_ = 1:numel(testImages)
     tic
     N_prop=0; RT_prop=0; oracle=0;
     % function provides proposals by variational flow/stereo, SGM, other methods can be used (also additionally)
-    if doKitti
-      % generating initial proposals from precomputed initial solutions
-      % [N_prop, RT_prop, oracle] = generateProposals_load(p, cam, ref, Seg );
 
     if ~exist( sprintf( '%s/PropSolution%03d_%02d.mat', pFolder, p.imgNr, p.subImg), 'file');
       [N_prop, RT_prop, oracle]  = generateProposals(p, cam, ref, Seg );
@@ -243,10 +241,6 @@ for testImg_ = 1:numel(testImages)
     else
       load( sprintf( '%s/PropSolution%03d_%02d.mat', pFolder, p.imgNr, p.subImg));
     end      
-
-    else
-      [N_prop, RT_prop, oracle ] = generateProposals(p, cam, ref, Seg );
-    end
 
     if size(N_prop,1) < 4
       N_prop = cat(1, N_prop, ones(1,size(N_prop, 2)));
