@@ -146,3 +146,15 @@ Basic usage:
 	segments further away than 8 and 5 cells.
 
 7.	The behaviour of other parameters are analyzed in [3].  
+
+8.	Why does a function loadXXX for your data by written by yourself and called
+	in line 213 of run_pwrs_red.m?
+	The problem is that the code does assume a certain frame numbering, by scene
+	and by frame within the scene. Also calibration matrices are required, which must
+	be provided by you. Furthermore the code needs to load (if 3 frames are used) also
+	the past frame of both cameras along. If reasoning is done over multiple frames
+	the code assumes that data from the per segment solution of the previous frame 
+	is available. To that end the scene-number and the frame-number is used, thus
+	these must be provided by you. You can use the function loadKittiFlow.m in 
+	the folder io as a guideline to create your read procedure for your data. 
+	

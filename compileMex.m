@@ -1,6 +1,5 @@
 %%% compile mex files
 
-% -D__QUIET__
 % no openmp: -D_NO_OPENMP
 % OPTIMFLAGS = /O2 /Oy- /DNDEBUG /openmp
 % for more speed compile externally with other compiler

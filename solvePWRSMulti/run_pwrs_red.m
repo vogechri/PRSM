@@ -16,6 +16,8 @@
 %%% Three frames can be turned off by setting p.use3Frames = false; below.
 %%%
 %%% returns the 2d scene flow: disparity and flow and disparity difference
+%%% also saves the disparities and the flow if storeOutput==1, 
+%%% these can be read with flow_read( 'filename' )
 %%%
 %%% dt: data-weight, ds: smooth-weight (\lambda), ts: relative motion smoothness
 %%% dj,tj: cutoff smoothness in pixel (eta); ps: per pixel patchsize: N_s;
@@ -35,7 +37,8 @@ storeOutput = 1; % store the output as flow/stereo files in the folder: storeFol
 % saved files can  be read with flow_read( 'filename' )
 
 % folder with image data to read from -- ausmes certain structure
-dataFolder =  '../../../Desktop/work/data/';
+%dataFolder =  '../../../Desktop/work/data/';
+%dataFolder = '../../data/data_stereo_flow/';
 dataFolder =  '../kittidata/'; % local folder -- just a few images added for testing
 
 p.subImg  = 10; % the frame number to proces, eg 10 -> pics 9 (if 3-frame version)
@@ -46,11 +49,15 @@ p.subImg  = 10; % the frame number to proces, eg 10 -> pics 9 (if 3-frame versio
 % save proposals for future frames in p.tempFolder
 p.saveProposals = true;
 % 'temporal' folder for multi frame version -- save&read proposals of previous frames
-p.tempFolder   = '/cluster/scratch_xp/public/vogechri/Journal/Thesis/3f_4w/';
+%p.tempFolder   = '/cluster/scratch_xp/public/vogechri/pastproposalsTrainNewTime/';
 p.tempFolder   = './scratch/pastproposals';
+
 % stores results in this folder
 p.storeFolder  = './scratch/test';
 p.sFolder      = p.storeFolder;
+
+% store proposals from previous frames here to reuse in the next frame
+%pFolder = '/cluster/scratch_xp/public/vogechri/propsTrainNewTime/';
 pFolder = './props/'; % store generated proposals here and reuse 
 % formerly used to save paramters and misc. info about run
 p.infoFileName = 'test.inf';
