@@ -96,9 +96,10 @@ Basic usage:
 1.	Make sure that you read in the correct calibration files and images.
 	As an example some KITTI images are provided along with calibration.
 
-2. 	There are the options to run the algorithm with 3 frames. So far it is assumed that
-	the files are given as scenenumber_frame.png as in Kitti.  
-	One can use three frames with the assumption of constant 3D velocity,
+2. 	There are the options to run the algorithm with 3 frames. 
+	So far it is assumed that the files are given as scenenumber_frame.png 
+	as in Kitti. One can use three frames with the assumption of constant 
+	3D velocity, 
 	option: 
 	p.use3Frames   = true; 
 	and also to utilize the past solution as proposals, option:
@@ -106,21 +107,23 @@ Basic usage:
 	The procedure should fall back to the standard 2 frame procedure in 
 	case there is no video data available.
 
-3. 	So far the proposals are taken from semi-global matching and [4] for the flow part.
+3. 	So far the proposals are taken from semi-global matching and [4] for the 
+	flow part.
 	One can use arbitrary procedures for that, e.g. sparse matches.   
 	For that the function generateProposals has to be modified accordingly.
 	Proposals can simply be concatenated to the proposal set: N_prop, RT_prop.
 	So far it is assumed to have one proposal per segment.
 	In the file pwrsfMulti_simpler_v3.m similar proposals are merged, such that some 
-	abuse of this constraint is possible (eg. demonstrated already in generateProposals).
+	abuse of this constraint is possible (eg. demonstrated already in 
+	generateProposals).
 	The cpp-code however does not have such a (unnecessary) constraint but requires
-	to have proposal-id and center per proposal as input - besides a list of moving planes
-	(normal/rigid motion pair). 
-	Thus new proposal algorithms could also only provide normal,rigid motion and a center and
-	refrain form the one proposal per segment idiom.
+	to have proposal-id and center per proposal as input - besides a list of moving 
+	planes (normal/rigid motion pair). 
+	Thus new proposal algorithms could also only provide normal,rigid motion and 
+	a center and refrain form the one proposal per segment idiom.
    
-4. 	Standard proposal generation is performed by fitting a motion per segment and to 
-	compress the information to 1k proposals, this can be adjusted.
+4. 	Standard proposal generation is performed by fitting a motion per segment 
+	and to compress the information to 1k proposals, this can be adjusted.
    
 5. 	Depending on the data set the grid size (initial super-pixel) has to be set.
 	Rule of thumb is to use ~1850 proposals per image, so for kitti we use
@@ -131,9 +134,10 @@ Basic usage:
 	refineLoop   = 1;% run refining based on loop default: ON  if 16x16 grid
 	endlevel     = 8;% refinement in 2^-1 steps, so startlevel= 16, 8 , .., endlevel
 	should be set accordingly.
-	Standard is to subdivide the grid once and half the grid size and expansion area.
-	Here endlevel = 8 ensures this in the standard setting, going from 16x16 to 8x8
-	superpixels. This parameter might need to be changed at a different initial gridsize.
+	Standard is to subdivide the grid once and half the grid size and 
+	expansion area. Here endlevel = 8 ensures this in the standard setting, 
+	going from 16x16 to 8x8 superpixels. 
+	This parameter might need to be changed at a different initial gridsize.
 	Or turned off if the initial size is small, e.g. 10x10 super-pixels
    
 6.	The expansion area can be adjusted with the parameters   
@@ -150,11 +154,12 @@ Basic usage:
 8.	Why does a function loadXXX for your data by written by yourself and called
 	in line 213 of run_pwrs_red.m?
 	The problem is that the code does assume a certain frame numbering, by scene
-	and by frame within the scene. Also calibration matrices are required, which must
-	be provided by you. Furthermore the code needs to load (if 3 frames are used) also
-	the past frame of both cameras along. If reasoning is done over multiple frames
-	the code assumes that data from the per segment solution of the previous frame 
-	is available. To that end the scene-number and the frame-number is used, thus
-	these must be provided by you. You can use the function loadKittiFlow.m in 
-	the folder io as a guideline to create your read procedure for your data. 
+	and by frame within the scene. Also calibration matrices are required, which 
+	must be provided by you. Furthermore the code needs to load 
+	(if 3 frames are used) also the past frame of both cameras along. 
+	When reasoning is done over multiple frames the code assumes that data from 
+	the per segment solution of the previous frame 
+	is available. To that end the scene-number and the frame-number is used, 
+	thus these must be provided by you. You can use the function loadKittiFlow.m
+	in the folder io as a guideline to create your read procedure for your data. 
 	
