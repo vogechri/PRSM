@@ -21,7 +21,7 @@ sW               = 1.0; % weight for spatial weight of segmentation energy
 doVideoProposals = par.usePrevProps; % without use3Frames: add proposals do 2Frame
 useThreeFrames   = par.use3Frames;
 
-fprintf('\n\n\n s%.0f, j%.0f, e%.0f  fromProps:%d \n\n\n', par.doSeg, par.doJit, par.doEgo, fromProposals);
+fprintf('\n s%.0f, j%.0f, e%.0f  fromProps:%d \n', par.doSeg, par.doJit, par.doEgo, fromProposals);
 
 colors = 0;       % segments colors constant
 temp = find(isnan(N_prop) | isinf(N_prop) );

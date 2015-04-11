@@ -116,8 +116,6 @@ void ProjectSegmentation( int nlhs, mxArray *plhs[], int nrhs, const mxArray *pr
   M           = (size_t) mxGetM(prhs[13]);
   N           = (size_t) mxGetN(prhs[13]);
 
-  printf("View: %d\n", view);
-
   int nNormals = max( mxGetM(prhs[ 7]), mxGetN(prhs[ 7]) );
   int nStep    = min( mxGetM(prhs[ 7]), mxGetN(prhs[ 7]) );
   int nSegments  = (int) (mxGetM(prhs[15]) * mxGetN(prhs[15]));
@@ -132,6 +130,7 @@ void ProjectSegmentation( int nlhs, mxArray *plhs[], int nrhs, const mxArray *pr
     memset(output, 0, sizeof(Scalar) * nSegments2);
   }
 
+  printf("Project Proposals View: %d ", view);
   printf ("nSegments %d, nNormals %d \n", nSegments, nNormals);
   ///////////////////////////////////////////////////////
 

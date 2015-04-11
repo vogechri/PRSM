@@ -83,7 +83,7 @@ void generateLinearMotionProposals( int nlhs, mxArray *plhs[], int nrhs, const m
   int nSegments_t1 = (int) max( mxGetM(edges), mxGetN(edges) );
   int nSegments_t0 = (int) max( mxGetM(prhs[ 4]), mxGetN(prhs[ 4]) );
 
-  printf ("nSegments t0-%d t1-%d, nNormals %d \n", nSegments_t0, nSegments_t1, nNormals);
+  printf ("Project proposals: Segments t0-%d t1-%d, nNormals %d \n", nSegments_t0, nSegments_t1, nNormals);
 
   ///////////////////////////////////////////////////////
   std::vector<int> currentSolution( nSegments_t0, 0 );
@@ -100,7 +100,7 @@ void generateLinearMotionProposals( int nlhs, mxArray *plhs[], int nrhs, const m
 
   enStore.flipNormals();// ?
 
-  std::clock_t startP(std::clock());
+//  std::clock_t startP(std::clock());
 
   linearMotionProposals<Scalar> LMH( nSegments_t0, nNormals, (int) N, (int) M );
 
@@ -132,8 +132,8 @@ void generateLinearMotionProposals( int nlhs, mxArray *plhs[], int nrhs, const m
   std::vector<linearMotionProposals<Scalar>::P3> newTranslations = LMH.getNewTra();
   std::vector<linearMotionProposals<Scalar>::M3> newRotations    = LMH.getNewRot();
 #endif
-  std::clock_t stopP(std::clock());
-  printf("Preprocess took %f\n", double(stopP-startP)/CLOCKS_PER_SEC );
+//  std::clock_t stopP(std::clock());
+//  printf("Preprocess took %f\n", double(stopP-startP)/CLOCKS_PER_SEC );
 
   /////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////
