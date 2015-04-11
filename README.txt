@@ -68,6 +68,8 @@ INSTALLING & RUNNING
 	SceneFlowCode/VCSF_CODE.
 	QPBO is needed for the ICCV version of the code only.
 	Please note that the code was tested with version v1.31 only.
+	Matlab code for the non-linear conjugate gradients optimization 
+	procedure 'minimize' by Carl Edward Rasmussen is already included. 
 	
 2.	Start MATLAB and run compileMex.m to build the utilities binaries.
 	(This step can be omitted if you are using Windows 64 bit or Unix 64 bit.)
