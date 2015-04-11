@@ -80,13 +80,7 @@ INSTALLING & RUNNING
 3.	From folder solvePWRSMulti run run_pwrs_red( xx ) - 
 	example given as comment in the code.
 
-4.	To enable plotting go to 
-	http://www.mathworks.com/matlabcentral/fileexchange/23629-export-fig
-	download the export_fig package and place it in the lowest folder
-	You can further download the sc-package from 
-	http://www.mathworks.com/matlabcentral/fileexchange/16233-sc-powerful-image-rendering
-	and place it in the same folder.
-   
+	
 CHANGES
 	1.0		April 19, 2014	Initial public release
 	2.0		March 11, 2015	Including code from [2,3] into the release
@@ -116,7 +110,7 @@ Basic usage:
 	For that the function generateProposals has to be modified accordingly.
 	Proposals can simply be concatenated to the proposal set: N_prop, RT_prop.
 	So far it is assumed to have one proposal per segment.
-	In the file pwrsfMulti_simpler_v3.m similar proposals are merged, such that some 
+	In the file pwrsf_v4.m similar proposals are merged, such that some 
 	abuse of this constraint is possible (eg. demonstrated already in 
 	generateProposals).
 	The cpp-code however does not have such a (unnecessary) constraint but requires
@@ -133,7 +127,7 @@ Basic usage:
 	p.gridSize= 16. 
 	Other scenes might need a different parameter here, eg. 12 for 
 	smaller images. This might render the refinement step pointless.
-	In the file pwrsfMulti_simpler_v3.m the parameters
+	In the file pwrsf_v4.m the parameters 
 	refineLoop = 1;% run refining based on loop default: ON  if 16x16 grid
 	endlevel   = 8;% refinement in 2^-1 steps, startlevel = 16, 8, .., 
 	endlevel should be set accordingly.

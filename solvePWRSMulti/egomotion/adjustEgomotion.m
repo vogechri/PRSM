@@ -2,7 +2,7 @@
 %%% steps than the current one
 function  [Rt_cam, N_proj, Rt_proj, C_proj, N_old_lin, Rt_old_lin, ...
            S_old_img, centers2D_old, ids_prevFrame, Seg] = ...
-  adjustEgomotion (Seg, ref, cam, par, plotXtraPrev, N_prop, RT_prop)
+           adjustEgomotion (Seg, ref, cam, par, N_prop, RT_prop)
 
 % could optionally hand over the label-sets prev frame and current
 roughFolder = '/cluster/scratch_xp/public/vogechri/consistent/';
@@ -58,9 +58,7 @@ N_old_lin = N_old;
 fprintf('Solution projected no consistency\n'); % here already siginficantly different!
 getKittiErr3dSF ( Seg, ref, cam, N_t0_lin, Rt_t0_lin, 0 );
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if plotXtraPrev == 1
-  plotAnalysis(ref, cam, N_t0_lin, Rt_old_lin, Seg, u, 20, par, sprintf('%03d_projectedPrevSolution', par.imgNr));
-end
+
 NRT_uni1 = cat( 2, N_proj',reshape(Rt_proj,16, size(Rt_proj,3))' );
 NRT_uni2 = cat( 2, N_t0_lin',reshape(Rt_t0_lin,16, size(Rt_t0_lin,3))' );
 [~,ids_prevFrame]=ismember(NRT_uni2, NRT_uni1, 'rows');
@@ -82,9 +80,5 @@ end
 % 
 fprintf('After fitting previous Frame Solution projected\n');
 getKittiErr3dSF ( Seg, ref, cam, N_proj(:,ids_prevFrame), Rt_proj(:,:,ids_prevFrame), 0 ); % works
-if plotXtraPrev ==1
-  [u, lambda_uv] = Compute_lambdaUV(ref.R, n, m);
-  plotAnalysis(ref, cam, N_proj(:,ids_prevFrame), Rt_proj(:,:,ids_prevFrame), Seg, u, 20, par, sprintf('%03d_projectedPrevSolution', par.imgNr));
-end
 
 Rt_cam

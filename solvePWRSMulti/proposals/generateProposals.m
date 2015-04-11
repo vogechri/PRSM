@@ -47,12 +47,7 @@ if flowstereo2d
   
   N_prop  = cat( 2, N_prop,  N_lin);
   RT_prop = cat( 3, RT_prop, Rt_lin);
- 
-  % plot  the fit:
-  %     N = size(cam.I(1).I,1);M = size(cam.I(1).I,2);
-  %     u  = ones(M,N,3);u(:,:,1) = repmat( [1:N],  M, 1 );u(:,:,2) = repmat( [1:M]', 1, N );
-  %     plotAnalysis(ref, cam(1), N_lin, Rt_lin, Seg, u, 10, par, 1, sprintf('%03d_genProp', par.imgNr), 0);
-  
+   
   if ~flowstereo2d_SGM && par.generateMoreProposals% 2nd p set with less different mvps
     if par.computeRflow
       [N_lin, Rt_lin] = initSeg_2dFlowTest(ref, cam, Seg, stereoT_2d, stereoT_2d, flowL_2d, flowR_2d, 1, par.fitSegs/2 );

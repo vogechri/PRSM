@@ -248,7 +248,7 @@ for testImg_ = 1:numel(testImages)
     toc
     
     % new simplified version - does it work ?
-    [flow2d, Energy] = pwrsfMulti_simpler_v3 ( ref, cam, p, Seg, N_prop, RT_prop, oracle );
+    [flow2d, Energy] = pwrsf_v4 ( ref, cam, p, Seg, N_prop, RT_prop, oracle );
     
     doKittiErrors =1;
     [occErr, noccErr, epes] = getKittiErrSF ( flow2d(:,:,1), flow2d(:,:,2), flow2d(:,:,3) ); %, p, 1 );

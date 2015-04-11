@@ -35,5 +35,3 @@ nSegs = numel(unique(solution));
 
 [S(1).Img, S(1).NeighIds, S(1).Ids, S(1).NeighIIds, S(1).Seeds, S(1).Areas, S(1).Centers, S(1).Edges, S(1).DisSim] = ...
   SuperPixelMisc(uint32(ISup), ps, 100, 5, int32(solution), nSegs); % ok
-
-%plotSegOverlay(Img, S, 400, par, 0.5, sprintf('cube%03d', 300));
