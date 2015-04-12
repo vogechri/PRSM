@@ -1,12 +1,10 @@
 %%% the main function
-function [flow2d, Energy] = pwrsfMulti_simpler_v3 ( ref, cam, par, Seg, N_prop, RT_prop, oracle )
+function [flow2d, Energy] = pwrsf_v4 ( ref, cam, par, Seg, N_prop, RT_prop )
 
 Energy   = 0;
-pwrs_ds = 0.03;%0.06 -- smoothness iccv version
 
-fromProposals    = ~(par.doSeg || par.doJit || par.doEgo); % either directly from proposals or intermediate pwrs step
 % local replacement strategy for VC-SF -- implemented suboptimally but at least its there - for sure better to follow the pwrs (iccv13) implementation
-lrp            = par.locRep & fromProposals; % alternative to per-run pwrsf
+lrp            = par.locRep; % alternative to per-run pwrsf
 reduceRNTProps = 1; % default: ON -- reduce similar proposals, combining them into a single one
 doAutoIntern   = 1; % default: ON -- estimate above from data term value in optimization
 localReduction = 0; % default: OFF -- tries to preselect proposals by solving a simpler problem first
@@ -20,8 +18,6 @@ useFWprojectedProposals = 1; % default:on, 3frame off? 2 frame on
 sW               = 1.0; % weight for spatial weight of segmentation energy
 doVideoProposals = par.usePrevProps; % without use3Frames: add proposals do 2Frame
 useThreeFrames   = par.use3Frames;
-
-fprintf('\n s%.0f, j%.0f, e%.0f  fromProps:%d \n', par.doSeg, par.doJit, par.doEgo, fromProposals);
 
 colors = 0;       % segments colors constant
 temp = find(isnan(N_prop) | isinf(N_prop) );
@@ -55,7 +51,6 @@ ts   = par.ts;
 ds   = par.ds;
 dj   = par.dj;
 tj   = par.tj;
-oob  = par.oob;
 % not used anymore: can be used if known from the data (DataDefinitionsVC.h)
 dD     = ceil(300 * size(ref.I(1).I, 2)/1242); % max disp
 maxMot = ceil(450 * size(ref.I(1).I, 2)/1242); % max flow
@@ -91,25 +86,16 @@ else
   ew    = getEdgeWeights(ref, cam, sW, useThreeFrames );
 end
 
-if fromProposals == true
   [N_lin_prop, Rt_lin_prop, centers2D_prop] = convert_to_nonCentered( Seg, N_prop, RT_prop );
   N_linM = N_lin_prop;Rt_linM = Rt_lin_prop;
   initIds = 0:numel(Seg.Ids)-1;
+  
+  % due to debugging:
   oobOracle.oobs        = int32(zeros(size(Seg.Img)));
   oobOracle.oobsFlow    = int32(zeros(size(Seg.Img)));
   oobOracle.oobsFlow2   = int32(zeros(size(Seg.Img)));
   oobOracle.oobsFlowRRt = int32(zeros(size(Seg.Img)));
-else % fromProposals == false
-  [ oobOracle, initIds, N_lin, Rt_lin ] = ...
-    pwrs_init ( ref, cam, Seg, N_prop, RT_prop, ew, dt, pwrs_ds, ts, ...
-    dj, tj, dD, oob, maxMot, par, oracle );
-  N_linM = N_lin;Rt_linM = Rt_lin;
-  % not needed for VC
-  oobOracle.oobs        = int32(zeros(size(oobOracle.oobs)));
-  oobOracle.oobsFlow    = oobOracle.oobs;
-  oobOracle.oobsFlow2   = oobOracle.oobs;
-  oobOracle.oobsFlowRRt = oobOracle.oobs;
-end
+
 %%% assume N_lin, etc contain prop-set,
 sol = int32(initIds);
 %%%%%%%%%%

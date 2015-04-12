@@ -4,16 +4,6 @@ function  [Rt_cam, N_proj, Rt_proj, C_proj, N_old_lin, Rt_old_lin, ...
            S_old_img, centers2D_old, ids_prevFrame, Seg] = ...
            adjustEgomotion (Seg, ref, cam, par, N_prop, RT_prop)
 
-% could optionally hand over the label-sets prev frame and current
-roughFolder = '/cluster/scratch_xp/public/vogechri/consistent/';
-%roughFolder = 'C:/Users/vogechri/Desktop/work/init/';
-
-if ~par.testing
-  prevDir = sprintf('%s/ECCV_Rough3Frame_f%02d/', roughFolder, par.subImg-1);
-else
-  prevDir = sprintf('%s/Eccv_RoughTest_f%02d_newSGM_red1/', roughFolder, par.subImg-1);
-end
-
 % -- temporary folder -- check if exists
 if exist(par.tempFolder,'dir')  %&& 0
 %  fprintf('loading from temporary folder\n');
@@ -55,9 +45,6 @@ N_old_lin = N_old;
 [N_t0_lin, Rt_t0_lin]     = ProjectCoverMvps(Seg.Edges, cam(1).Kl, N_old_lin(1:3,:), Rt_old_lin, centers2D_old, centers2D, Seg.Img );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fprintf('Solution projected no consistency\n'); % here already siginficantly different!
-getKittiErr3dSF ( Seg, ref, cam, N_t0_lin, Rt_t0_lin, 0 );
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 NRT_uni1 = cat( 2, N_proj',reshape(Rt_proj,16, size(Rt_proj,3))' );
 NRT_uni2 = cat( 2, N_t0_lin',reshape(Rt_t0_lin,16, size(Rt_t0_lin,3))' );
@@ -77,8 +64,4 @@ for i=1:size(Rt_proj,3)
   Rt_proj(:,:,i) = Rt_cam * Rt_proj(:,:,i);
 end
 
-% 
-fprintf('After fitting previous Frame Solution projected\n');
-getKittiErr3dSF ( Seg, ref, cam, N_proj(:,ids_prevFrame), Rt_proj(:,:,ids_prevFrame), 0 ); % works
-
-Rt_cam
+%Rt_cam

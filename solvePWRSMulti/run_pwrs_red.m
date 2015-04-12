@@ -21,11 +21,11 @@
 %%%
 %%% dt: data-weight, ds: smooth-weight (\lambda), ts: relative motion smoothness
 %%% dj,tj: cutoff smoothness in pixel (eta); ps: per pixel patchsize: N_s;
-%%% oob: theta_oob; lr: local replacement: on/off; re: refinement on/off
+%%% lr: local replacement: on/off; re: refinement on/off
 %%% segWeight (mu); pseg,pjit,pego iccv13 precomputation on/off
 %%% as: theta_oob/occ; tp: theta_mvp; ots: tolerated distance (epsilon)
 function flow2d = run_pwrs_red(imgNr, storeFolder, subImg, ...
- dt, ds, ts, dj, tj, ps, oob, infoFileName, lr, re, testing, segWeight, pseg, pjit, pego, as, tp, ots )
+ dt, ds, ts, dj, tj, ps, lr, re, testing, segWeight, as, tp, ots )
 
 %example: pic 138
 %run_pwrs_red( [138], './2Frames/', 10, 0.4, 0.045, 1.0, 20, 20, 25 );
@@ -60,7 +60,7 @@ p.sFolder      = p.storeFolder;
 %pFolder = '/cluster/scratch_xp/public/vogechri/propsTrainNewTime/';
 pFolder = './props/'; % store generated proposals here and reuse 
 % formerly used to save paramters and misc. info about run
-p.infoFileName = 'test.inf';
+
 p.use3Frames   = true; % well use 3 not 2 frames -- assume pics loaded in ref/cam structure
 p.usePrevProps = true; % use proposals from the previous time step -> loaded from tempFolder
 % the procedure falls back to the standard 2 frame procedure in case there
@@ -71,7 +71,6 @@ p.generateMoreProposals = true; % demonstrates how to append additional proposal
 %
 p.fitSegs  = 1000;  % reduce # of fitted proposals to this value, default 1000 
 p.ps  = 25; % patchsize of per pixel optimization: 25: 50x50 pixel, default 25
-p.oob = 0.8;% penalty for border oracle (oracle is derived from the initial solutions)
 p.tj  = 20; % truncation value of motion smoothness, default 20
 p.dj  = 20; % truncation of disparity smoothness, default 20
 p.ts  = 1;  % smoothness of the motion field (p.ds*p.ts), default 0.1
@@ -90,29 +89,12 @@ p.vcEpsPix   = 0.015;% epsilon in vc data term on pixel level, default 0.15 or 0
 p.locRep=1;% optional : naive local replacement for view-consistent implementation;
 p.refine=1;% optional : hierarchical refinement
 
-p.doSeg=0; % do pwrsf (iccv13, basic) for preprocessing leads to a reduction of proposals
-p.doJit=0; % do 'local replacement' (iccv13 or journal for reference) for preprocessing
-           % very effective strategy - can be implemented for VC-SF as well
-           % but was NOT for time reasons. So to use this we must first run
-           % our basic model
-p.doEgo=0; % do egomotion, same as above would be easy to integrate to VC but not done yet 
-
-
 %%%% size of expansion area in segments - should/could be wrt size of images
 p.gx=8; % 8 kitti - can be adjusted to image size / relative size
 p.gy=5; % 5 kitti
 p.gridSize= 16; % kitti default 16 but depends on image size trades accuracy with speed
 p.testing = 0; % whether to load kitti images from the training or test set
 
-if exist('pseg','var')
-  p.doSeg = pseg;
-end
-if exist('pjit','var')
-  p.doJit = pjit;
-end
-if exist('pego','var')
-  p.doEgo = pego;
-end
 if exist('ots','var')
   p.vcEpsSeg = ots; % per segment tolerance epsilon
 end
@@ -135,14 +117,9 @@ if exist('storeFolder', 'var')
   p.storeFolder = storeFolder;
   p.sFolder = p.storeFolder;
 end
-if exist('infoFileName', 'var')
-  p.infoFileName = infoFileName;
-end
+
 if exist('ps', 'var')
   p.ps= ps;
-end
-if exist('oob', 'var')
-  p.oob=oob;
 end
 if exist('tj', 'var')
   p.tj=tj;
@@ -195,8 +172,8 @@ testImages = imgNr;
 subImages  = subImg;
 
 permStr = '';
-permStr = sprintf('%sdt:%1.2f ds:%.3f ts:%.3f dj:%.0f tj:%.0f oob:%.2f ps:%d \n\n', ...
-  permStr, p.dt, p.ds, p.ts, p.dj, p.tj, p.oob, p.ps );
+permStr = sprintf('%sdt:%1.2f ds:%.3f ts:%.3f dj:%.0f tj:%.0f ps:%d \n\n', ...
+  permStr, p.dt, p.ds, p.ts, p.dj, p.tj, p.ps );
 fprintf(2,permStr);
 
 if ~exist(p.sFolder,'dir')
@@ -229,15 +206,15 @@ for testImg_ = 1:numel(testImages)
     Seg = setWeights_patchSmooth( Seg, cam(1).Kl );
 
     tic
-    N_prop=0; RT_prop=0; oracle=0;
+    N_prop=0; RT_prop=0;
     % function provides proposals by variational flow/stereo, SGM, other methods can be used (also additionally)
 
     if ~exist( sprintf( '%s/PropSolution%03d_%02d.mat', pFolder, p.imgNr, p.subImg), 'file');
-      [N_prop, RT_prop, oracle]  = generateProposals(p, cam, ref, Seg );
+      [N_prop, RT_prop]  = generateProposals(p, cam, ref, Seg );
       if ~exist(pFolder,'dir')
         mkdir(pFolder);
       end
-      save( sprintf( '%s/PropSolution%03d_%02d.mat', pFolder, p.imgNr, p.subImg), 'Seg', 'N_prop', 'RT_prop', 'oracle');
+      save( sprintf( '%s/PropSolution%03d_%02d.mat', pFolder, p.imgNr, p.subImg), 'Seg', 'N_prop', 'RT_prop');
     else
       load( sprintf( '%s/PropSolution%03d_%02d.mat', pFolder, p.imgNr, p.subImg));
     end      
@@ -248,7 +225,7 @@ for testImg_ = 1:numel(testImages)
     toc
     
     % new simplified version - does it work ?
-    [flow2d, Energy] = pwrsf_v4 ( ref, cam, p, Seg, N_prop, RT_prop, oracle );
+    [flow2d, Energy] = pwrsf_v4 ( ref, cam, p, Seg, N_prop, RT_prop );
     
     doKittiErrors =1;
     [occErr, noccErr, epes] = getKittiErrSF ( flow2d(:,:,1), flow2d(:,:,2), flow2d(:,:,3) ); %, p, 1 );

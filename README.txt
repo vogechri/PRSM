@@ -6,7 +6,7 @@
 #                          ECCV 2014                              #
 #                          IJCV 2015                              #
 #                                                                 #
-#            Copyright 2013-2015 Christoph Vogel                  #
+#            Copyright 2013-2015 ETH Zurich (Christoph Vogel)     #
 #                                                                 #
 ###################################################################
 
@@ -66,8 +66,7 @@ INSTALLING & RUNNING
 	and place it into ./cpp
 	and adjust the definition file DataDefinitionVC.h in the folder
 	SceneFlowCode/VCSF_CODE.
-	QPBO is needed for the ICCV version of the code only.
-	Please note that the code was tested with version v1.31 only.
+	Please note that the code was tested with version v1.31 only. 
 	Matlab code for the non-linear conjugate gradients optimization 
 	procedure 'minimize' by Carl Edward Rasmussen is already included. 
 	

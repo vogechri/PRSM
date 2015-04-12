@@ -1,6 +1,6 @@
 %%% generate the proposal set by fitting flow and motion parts into the
 %%% segments. 
-function [ N_prop, RT_prop, oracle ] = generateProposals(par, cam, ref, Seg )
+function [ N_prop, RT_prop] = generateProposals(par, cam, ref, Seg )
 
 flowstereo2d_SGM = 1;
 flowstereo2d     = 0;
@@ -140,11 +140,4 @@ for i=1:numel(bad_id)
   RT_prop( 1:3, 4, bad_id ) =  RT_prop( 1:3, 4, bad_id-1 );
 end
 
-oracle.stereo = stereoT_2d;
-oracle.flowL = flowL_2d;
-if exist('flowR_2d','var')
-  oracle.flowR = flowR_2d;
-else
-  oracle.flowR = flowl_2d;
-end
 end
