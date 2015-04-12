@@ -37,7 +37,7 @@ if  par.subImg>=1 && (doVideoProposals == 1 || useThreeFrames ==1)
     [Rt_cam, N_proj, Rt_proj, C_proj, N_old_lin, Rt_old_lin, S_old_img, centers2D_old, ids_prevFrame, Seg] = ...
       adjustEgomotion (Seg, ref, cam, par, N_prop, RT_prop);
   catch
-    cprintf('red','Failed to load videoProposals\n');
+    cprintf('red','Failed to load videoProposals\nFalling back to 2 frame case\n');
     doVideoProposals=0;
     useThreeFrames =0;
   end
