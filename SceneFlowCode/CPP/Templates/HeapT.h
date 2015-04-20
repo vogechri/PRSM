@@ -118,7 +118,7 @@ public:
   { return interface_.get_heap_position(_h) != -1; }
   
   /// insert the entry _h
-  void insert(HeapEntry _h)  { push_back(_h); upheap(size()-1); }
+  void insert(HeapEntry _h)  { this->push_back(_h); upheap(size()-1); }
 
   /// get the first entry
   HeapEntry front() { assert(!empty()); return entry(0); }
@@ -135,10 +135,10 @@ public:
     if (size() > 1)
     {
       entry(0, entry(size()-1));
-      resize(size()-1);
+      this->resize(size()-1);
       downheap(0);
     }
-    else resize(size()-1);
+    else this->resize(size()-1);
   }
 
   /// remove an entry
@@ -152,11 +152,11 @@ public:
     
     // last item ?
     if ((unsigned int) pos == size()-1)
-      resize(size()-1);
+      this->resize(size()-1);
 
     else {
       entry(pos, entry(size()-1)); // move last elem to pos
-      resize(size()-1);
+      this->resize(size()-1);
       downheap(pos);
       upheap(pos);
     }

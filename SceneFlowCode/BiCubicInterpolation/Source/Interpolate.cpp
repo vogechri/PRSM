@@ -175,12 +175,12 @@ else
 }
 
 
-if (nlhs == 6)
-{
-  BiCubicIp<double> bcIP(N, M, I);
-  bcIP.approximateImageGradients();
-  bcIP.interpolate_2nd( elementsX, X, Y, outputF, outputdFX, outputdFY, outputdFXX, outputdFYY, outputdFXY );
-}
+//if (nlhs == 6)
+//{
+//  BiCubicIp<double> bcIP(N, M, I);
+//  bcIP.approximateImageGradients();
+//  bcIP.interpolate_2nd( elementsX, X, Y, outputF, outputdFX, outputdFY, outputdFXX, outputdFYY, outputdFXY );
+//}
 if (nlhs == 3)
 {
   BiCubicIp<double> bcIP(N, M, I);

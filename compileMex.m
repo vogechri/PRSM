@@ -9,9 +9,16 @@ windows = 1;
 sseenabled = 1;
 % vcsf eccv14
 if sseenabled
+if windows
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_PIX_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Pix_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+else
+%-m64 -Ofast -flto -march=native
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -mfpmath=sse -O -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -mfpmath=sse -O -D_PIX_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Pix_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -m64 -mfpmath=sse -O -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+end  
 else
   % in case of no sse extension and openmp on computers:
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_SEG_ -D_no_sse_ip_ -D_NO_OPENMP -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp

@@ -225,6 +225,7 @@ for testImg_ = 1:numel(testImages)
     toc
     
     % new simplified version - does it work ?
+    cprintf('green','Initialization with proposals finished\n');
     [flow2d, Energy] = pwrsf_v4 ( ref, cam, p, Seg, N_prop, RT_prop );
     
     doKittiErrors =1;

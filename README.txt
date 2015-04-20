@@ -72,6 +72,9 @@ INSTALLING & RUNNING
 	
 2.	Start MATLAB and run compileMex.m to build the utilities binaries.
 	(This step can be omitted if you are using Windows 64 bit or Unix 64 bit.)
+	Reset windows=1 or windows=0 in the file, depending on your OS.
+	Make sure to have lapack installed already, otherwise you need to 
+	install it. 
 	Adjust the compiler flags accordingly for your purposes 
 	(defaults should work in most cases). 
 	Additional compiler switches can be looked up in the file 
