@@ -48,6 +48,11 @@ License along with this software.*/
 //#define _writeEnergies_
 //#define _writeDebugOut_
 
+/// windows sse possible - else fall back
+#ifdef WIN32
+#define _sse_linux_
+#endif
+
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 //// from here on, change only if you know what you are doing: /////
@@ -102,9 +107,6 @@ License along with this software.*/
 /// debugging:
 //#define _simple_data_
 //#define _FW_ONLY_
-
-/// compiler can handle sse4.1 ? - not important anyway off by default
-//#define __SSE4_1__
 
 /// defines whether the rescaling of oob pixel has to be done locally(per pixel) or globally per segment
 //#define _globalRescaling_

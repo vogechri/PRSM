@@ -42,7 +42,7 @@ public:
 
   ~BiLinearIP() {};
 
-#ifdef _no_sse_ip_
+#ifdef _sse_linux_
 
   void interpolate_short( short *&inputF, int elements, Scalar*& X, Scalar *&Y, short *&outputF )
   {
