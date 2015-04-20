@@ -6,7 +6,12 @@
 
 windows = 1;
 % ./solvePWRSMulti/mex/
-sseenabled = 1;
+if windows
+  sseenabled = 1;
+else
+  sseenabled = 0;
+end
+
 % vcsf eccv14
 if sseenabled
 if windows
@@ -15,9 +20,9 @@ if windows
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
 else
 %-m64 -Ofast -flto -march=native
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -mfpmath=sse -O -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -mfpmath=sse -O -D_PIX_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Pix_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -m64 -mfpmath=sse -O -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_PIX_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Pix_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
 end  
 else
   % in case of no sse extension and openmp on computers:
@@ -55,21 +60,4 @@ if windows==1
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -DWIN32 -I./SceneFlowCode/CPP -I./SceneFlowCode/TvL1_Matrix -output ./solvePWRSMulti/mex/TvL1Matrix ./SceneFlowCode/TvL1_Matrix/MexInterface.cpp
 else
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -I./SceneFlowCode/CPP -I./SceneFlowCode/TvL1_Matrix -output ./solvePWRSMulti/mex/TvL1Matrix ./SceneFlowCode/TvL1_Matrix/MexInterface.cpp
-end
-
-% optional -- switch one of pseg, pjit, pego to one to use
-%%% pwrsf iccv13 %%%
-compileICCV13_version =0;
-if compileICCV13_version
-  % with occlusion-handling
-  %mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_OCC_ -D_SEG_  -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRS/mex/QPBO_SegOcc ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
-  %mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_OCC_ -D_FUSE_ -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRS/mex/QPBO_FuseOcc ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
-  %mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_OCC_ -D_JIT_  -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRS/mex/QPBO_JitterOcc ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
-  %mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG" -O -D_NO_OPENMP -D_OCC_ -D_PIX_  -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRS/mex/QPBO_PixelOcc ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
-  
-  % without occlusino handling - default
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_SEG_  -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRSMulti/mex/QPBO_Seg ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_FUSE_ -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRSMulti/mex/QPBO_Fuse ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_JIT_  -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRSMulti/mex/QPBO_Jitter ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG" -O -D_NO_OPENMP -D_PIX_  -I./SceneFlowCode/CPP -I./SceneFlowCode/QPBO-v1.3.src -I. -output ./solvePWRSMulti/mex/QPBO_Pixel ./SceneFlowCode/PwrsCode/MexInterface.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_extra.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_maxflow.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO_postprocessing.cpp ./SceneFlowCode/QPBO-v1.3.src/QPBO.cpp
 end
