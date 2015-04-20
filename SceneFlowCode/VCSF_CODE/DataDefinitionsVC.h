@@ -49,7 +49,7 @@ License along with this software.*/
 //#define _writeDebugOut_
 
 /// windows sse possible - else fall back
-#ifdef WIN32
+#ifndef WIN32
 #define _sse_linux_
 #endif
 
