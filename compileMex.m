@@ -45,8 +45,12 @@ mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -I
 mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -I./SceneFlowCode/CPP -output ./solvePWRSMulti/mex/fitHomoR ./SceneFlowCode/HomFitting/MexInterface_Rot.cpp
 
 if sseenabled
+if windows==1
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -I./SceneFlowCode/CPP -output ./solvePWRSMulti/mex/Interpol_mex ./SceneFlowCode/BiCubicInterpolation/Source/mexInterface.cpp
 else
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -lgomp -I./SceneFlowCode/CPP -output ./solvePWRSMulti/mex/Interpol_mex ./SceneFlowCode/BiCubicInterpolation/Source/mexInterface.cpp
+end
+  else
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_no_sse_ip_ -D_NO_OPENMP -I./SceneFlowCode/CPP -output ./solvePWRSMulti/mex/Interpol_mex ./SceneFlowCode/BiCubicInterpolation/Source/mexInterface.cpp
 end
 
