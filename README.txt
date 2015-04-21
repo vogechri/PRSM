@@ -89,7 +89,10 @@ CHANGES
 	1.0		April 19, 2014	Initial public release
 	2.0		March 11, 2015	Including code from [2,3] into the release
 	
-	
+
+Issues:	At the moment the multi-core extension is not supported for linux 
+	and works on Windows platforms. This issue will be solved in a 
+	subsequent version.
 	
 	
 Basic usage:
