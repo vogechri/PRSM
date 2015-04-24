@@ -1,15 +1,9 @@
 ###################################################################
 #                                                                 #
 #                 Piecewise Rigid Scene Flow                      #
-#      Christoph Vogel, Konrad Schindler and Stefan Roth          #
-#                          ICCV 2013                              #
-#                          ECCV 2014                              #
-#                          IJCV 2015                              #
-#                                                                 #
-#            Copyright 2013-2015 ETH Zurich (Christoph Vogel)     #
 #                                                                 #
 ###################################################################
-
+#            Copyright 2013-2015 ETH Zurich (Christoph Vogel)     #
 
 
 ABOUT:
