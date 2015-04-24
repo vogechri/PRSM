@@ -3,7 +3,8 @@
 #                 Piecewise Rigid Scene Flow                      #
 #                                                                 #
 ###################################################################
-#            Copyright 2013-2015 ETH Zurich (Christoph Vogel)     #
+
+Copyright 2013-2015 ETH Zurich (Christoph Vogel)
 
 
 ABOUT:
