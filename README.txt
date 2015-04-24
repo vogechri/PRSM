@@ -69,6 +69,10 @@ INSTALLING & RUNNING
 	Please note that the code was tested with version v1.31 only. 
 	Matlab code for the non-linear conjugate gradients optimization 
 	procedure 'minimize' by Carl Edward Rasmussen is already included. 
+	Make sure your machine has the lapack library. If you use linux
+	the install should be easy, in case of Windows you may have it 
+	already as part of your Matlab installation. 
+	
 	
 2.	Start MATLAB and run compileMex.m to build the utilities binaries.
 	(This step can be omitted if you are using Windows 64 bit or Unix 64 bit.)
@@ -90,10 +94,9 @@ CHANGES
 	2.0		March 11, 2015	Including code from [2,3] into the release
 	
 
-Issues:	At the moment the multi-core extension is not supported for linux 
-	and works on Windows platforms. This issue will be solved in a 
-	subsequent version.
-	
+Solved Issues:	
+
+	Multi-core extension is now supported for linux also. 
 	
 Basic usage:
 
@@ -166,4 +169,11 @@ Basic usage:
 	To that end the scene-number and the frame-number is used, 
 	thus these must be provided by you. You can use the function loadKittiFlow.m 
 	in the folder io as a guideline to create your read procedure for your data. 
+	
+9.	If you cannot run the provided flow library, or your Computer has more the 2 
+	cores, you can download the code from https://github.com/vogechri/DataFlow 
+	and compile it respectively. 
+	Please change the lines 74-78 in the file 
+	solvePWRSMulti/proposals/generateProposals.m from TGV_flowDouble to TGV_flow 
+	twice.
 	

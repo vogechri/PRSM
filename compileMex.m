@@ -5,7 +5,7 @@
 % for more speed compile externally with other compiler
 
 windows = 1;
- sseenabled = 1;
+sseenabled = 1;
 
 % vcsf eccv14
 if sseenabled
@@ -14,10 +14,9 @@ if windows
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_PIX_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Pix_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
   mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
 else
-% -march=native
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -lgomp -D_SEG_ -D_sse_linux_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -lgomp -D_PIX_ -D_sse_linux_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Pix_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
-  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" -O -lgomp -D_sse_linux_ -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" CXXFLAGS="-fPIC -fopenmp -march=native" -lgomp -D_SEG_ -D_sse_linux_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" CXXFLAGS="-fPIC -fopenmp -march=native" -lgomp -D_PIX_ -D_sse_linux_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Pix_3SM ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
+  mex CC=g++ CXX=g++ LD=g++ -v OPTIMFLAGS="$OPTIMFLAGS /O2 /DNDEBUG /openmp" CXXFLAGS="-fPIC -fopenmp -march=native" -lgomp -D_sse_linux_ -D_testLocalReplacement_ -D_SEG_ -I./SceneFlowCode/CPP -I./SceneFlowCode/maxflow-v3.03.src -I. -output ./solvePWRSMulti/mex/Seg_3SM_locreplace ./SceneFlowCode/VCSF_CODE/MexInterface.cpp ./SceneFlowCode/maxflow-v3.03.src/graph.cpp ./SceneFlowCode/maxflow-v3.03.src/maxflow.cpp
 end  
 else
   % in case of no sse extension and openmp on computers:

@@ -268,7 +268,7 @@ void genScore<Scalar>::
     // kill dumb highest 16 bits: never show up anyway so uncomment
     //      score = _mm_and_si128( score, _mm_set_epi16 (0,  0xffff,  0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff) );
 
-#ifdef __SSE4_1__
+#ifndef _sse_linux_
     scores[i] += locThresh * (score.m128i_i16[0] + score.m128i_i16[1] + score.m128i_i16[2] + score.m128i_i16[3] +
       score.m128i_i16[4] + score.m128i_i16[5] + score.m128i_i16[6] + score.m128i_i16[7]);
 #else
@@ -862,7 +862,7 @@ void genScore<Scalar>::
     score = _mm_add_epi16( locScore, score );
   }
 
-#ifdef __SSE4_1__
+#ifndef _sse_linux_
   scores[i] = dtaPen* (score.m128i_i16[0] + score.m128i_i16[1] + score.m128i_i16[2] + score.m128i_i16[3] + 
     score.m128i_i16[4] + score.m128i_i16[5] + score.m128i_i16[6] + score.m128i_i16[7]);
 #else

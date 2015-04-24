@@ -976,7 +976,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
           std::vector<int> noSolutions;noSolutions.reserve( nSegments[0][0]+nSegments[0][1]+nSegments[1][0]+nSegments[1][1] );
 
-          std::vector< GraphCutContainer<Scalar> > gs ( 4 );
+          std::vector< GraphCutContainer<Scalar> > gs ( nProcessors );
           for (int i=0;i<gs.size();i++)
             gs[i].create( maxVariables, numEdges+4*maxVariables );
 

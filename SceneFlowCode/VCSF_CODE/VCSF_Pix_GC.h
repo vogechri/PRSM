@@ -830,7 +830,7 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
         std::vector< std::pair<int,int> > pidOrd;
 
-        std::vector< GraphCutContainer<Scalar> > gs ( 4 );
+        std::vector< GraphCutContainer<Scalar> > gs ( numThreads );
         for (int i=0;i<gs.size();i++)
           gs[i].create(maxNodes, numEdges);
 
