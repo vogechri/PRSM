@@ -44,6 +44,7 @@ If you use this software you should cite the following in any resulting publicat
     	In: International Journal of Computer Vision (IJCV), Feb. 2015
 	
 For initialisation we use the method described in (with a lot less iterations):
+
     [4] An Evaluation of Data Costs for Optical Flow
         C. Vogel, S. Roth and K. Schindler
         In GCPR, Saarbruecken, Germany, September 2013
