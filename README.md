@@ -31,13 +31,14 @@ DISCLAIMER:
 This demo software has been rewritten for the sake of simplifying the
 implementation. Therefore, the results produced by the code may differ
 from those presented in the papers [1,2,3].
-In fact the results should be a bit better on the KITTI dataset:
+In fact the results should be a bit better on the KITTI dataset
 http://www.cvlibs.net/datasets/kitti/.
 ==========================================================================
 
 
 IMPORTANT:
 If you use this software you should cite the following in any resulting publication:
+
     [1] Piecewise Rigid Scene Flow
         C. Vogel, K. Schindler and S. Roth
         In ICCV, Sydney, Australia, December 2013
