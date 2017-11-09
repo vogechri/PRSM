@@ -857,11 +857,18 @@ void run_VCSF( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 #endif
 
           for (int k = 0;k < dsg_init.size(); k++)
+          {
             varNr = dsgX[ dsg_init[k] ]->initNewSeg( i, prop2Plane[i], patchXY[i][0], patchXY[i][1], &homos[dsg_init[k]+1], expPatches, enStore.getNormals(), varNr ,0, pid );
+          }
 
           expPropVars[i] = varNr + dsgX[ dsg_init[0] ]->getElemVarsFirst( pid );
-          maxVariables = max ( expPropVars[i], maxVariables );
-
+          
+          // only let one process update maxVariables at once
+          #pragma omp critical
+          {
+            maxVariables = max ( expPropVars[i], maxVariables ); 
+          }
+          
           for (int k = 0;k < dsg_data.size(); k++)
           {
             Datasegments<Scalar>::P4i ct_ct = dsgX[dsg_data[k]]->getTimeCam();

@@ -74,7 +74,7 @@ public:
     // prevent bad lookups in bilinearIP
     for (int ij = (N-1)*M; ij < N*M;ij++)
       i_in_short [ij+M]  = (short) ( img2_[ij]*Scalar(255.0) );
-    i_in_short [N*M+M] = (short) ( img2_[N*M]*Scalar(255.0) );
+    i_in_short [N*M+M] = (short) ( Scalar(0.0) );
 
   }
 

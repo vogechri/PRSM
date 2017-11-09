@@ -35,6 +35,11 @@ template<class Scalar>
 bool Datasegments<Scalar>::
   testNewProp( int proposal )
 {
+  // Check if current element has been initialized
+  if (dataElements[proposal].proposal == -1)
+  {
+    return true;
+  }
   P4i boxFW = dataElements[proposal].boxFW;
   P4i boxBW = dataElements[proposal].boxBW;
 
@@ -42,9 +47,16 @@ bool Datasegments<Scalar>::
 
   // 1. compare with elements under revision:
   for (int i=0;i<storedProp.size();i++)
-    if (storedProp[i] != -1)
+  {
+    int prid = storedProp[i];
+    if (prid != -1)
     {
-      int prid = storedProp[i];
+      // Check if other elements have been initialized, and skip comparison if not
+      if (dataElements[prid].proposal == -1)
+      {
+        continue;
+      }
+
       if ( (boxFW[0] < dataElements[prid].boxFW[2]+puffer && puffer+boxFW[2] > dataElements[prid].boxFW[0]) && 
         (boxFW[1] < dataElements[prid].boxFW[3]+puffer && puffer+boxFW[3] > dataElements[prid].boxFW[1]) )
         return false;
@@ -52,6 +64,7 @@ bool Datasegments<Scalar>::
         (boxBW[1] < dataElements[prid].boxBW[3]+puffer && puffer+boxBW[3] > dataElements[prid].boxBW[1]) )
         return false;
     }
+  }
     return true;
 }
 
@@ -905,7 +918,6 @@ initNewSeg( int propId, int proposal, int boxX, int boxY, genHomoG<Scalar>* gHom
   {
     newElem.seg2segFW = segmentsareas1;
     newElem.seg2segBW = segmentsareas2;
-    newElem.proposal = proposal;
     newElem.Hom  = Hom;
     newElem.Nom  = iKlt * (*normals)[proposal];
     newElem.iHom = iHom;
@@ -914,6 +926,7 @@ initNewSeg( int propId, int proposal, int boxX, int boxY, genHomoG<Scalar>* gHom
     newElem.firstIdBW = newElem.varsFW + addToSeg2Vars;
     newElem.boxFW = box1A;
     newElem.boxBW = box2A;
+    newElem.proposal = proposal;
     box1 = box1A;
     box2 = box2A;
   }
@@ -921,7 +934,6 @@ initNewSeg( int propId, int proposal, int boxX, int boxY, genHomoG<Scalar>* gHom
   {
     newElemV[pid].seg2segFW = segmentsareas1;
     newElemV[pid].seg2segBW = segmentsareas2;
-    newElemV[pid].proposal = proposal;
     newElemV[pid].Hom  = Hom;
     newElemV[pid].Nom  = iKlt * (*normals)[proposal];
     newElemV[pid].iHom = iHom;
@@ -930,6 +942,7 @@ initNewSeg( int propId, int proposal, int boxX, int boxY, genHomoG<Scalar>* gHom
     newElemV[pid].firstIdBW = newElemV[pid].varsFW + addToSeg2Vars;
     newElemV[pid].boxFW = box1A;
     newElemV[pid].boxBW = box2A;
+    newElemV[pid].proposal = proposal;
     box1 = box1A;
     box2 = box2A;
   }
