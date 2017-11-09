@@ -31,15 +31,14 @@ function flow2d = run_pwrs_red(imgNr, storeFolder, subImg, ...
 %run_pwrs_red( [138], './2Frames/', 10, 0.4, 0.045, 1.0, 20, 20, 25 );
 % example: set: p.saveProposals =true; p.use3Frames = true;p.usePrevProps = true;
 %run_pwrs_red( [151,27], './3Frames/', [8,9,10], 0.4, 0.045, 1.0, 20, 20, 25 );
+%example: Use NREC agricultural data instead of kitti, includes invalid and
+%static pixels
+%run_pwrs_red( 201408272252, './2Frames/',[8,9,10]);
 
 global doKittiErrors;doKittiErrors =0; % turn on/off permanent error evaluation
 storeOutput = 1; % store the output as flow/stereo files in the folder: storeFolder 
 % saved files can  be read with flow_read( 'filename' )
 
-% folder with image data to read from -- ausmes certain structure
-%dataFolder =  '../../../Desktop/work/data/';
-%dataFolder = '../../data/data_stereo_flow/';
-dataFolder =  '../kittidata/'; % local folder -- just a few images added for testing
 
 p.subImg  = 10; % the frame number to proces, eg 10 -> pics 9 (if 3-frame version)
 % 10 and 11 are loaded. To suppress the camera motion, eg. from a stereo
@@ -180,20 +179,53 @@ if ~exist(p.sFolder,'dir')
   mkdir(p.sFolder);
 end
 
+doNREC = 0; 
+doKitti = 0;
 for testImg_ = 1:numel(testImages)  
   p.imgNr = testImages(testImg_);
   
   for subImg_ = 1:numel(subImages)
     p.subImg = subImages(subImg_ );
+    
+    % Check source dataset
+
+    if numel(num2str(p.imgNr)) == 12
+        doNREC = 1;
+    else
+        doKitti = 1;
+    end
+    if doNREC && doKitti
+        error('Can not include images from multiple sources, sizes mismatch')
+    end
+    % folder with image data to read from -- assumes certain structure
+    if doNREC
+        dataFolder = '../nrecdata/';
+    elseif doKitti
+        dataFolder =  '../kittidata/'; % local folder -- just a few images added for testing
+    else
+        % add other datasets
+    end
  
 % can sometimes be unwanted, prevents from overwriting results:
 %    if exist( sprintf('%s/RESULTS_K%03d_%02d_%s.txt', p.sFolder, p.imgNr, p.subImg, date), 'file' )
 %      continue;
 %    end
-    
-    doKitti = 1;
+
     if doKitti
       [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadKittiFlow(dataFolder , p.imgNr, p);
+    elseif doNREC 
+      [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadNRECFlow(dataFolder , p.imgNr, p);
+      % passing regions in the left and right images that should be
+      % considered static (such as bodies rigidly attached to the camera)
+      % or invalid (such as rectification artifacts) as images
+      p.leftValid = imread('../nrecdata/2014.08DevilsGroveLeftValid.png');
+      p.rightValid = imread('../nrecdata/2014.08DevilsGroveRightValid.png');
+      p.rightStatic = imread('../nrecdata/2014.08DevilsGroveRightHood.png');
+      p.leftStatic = disp_read('../nrecdata/2014.08DevilsGroveLeftHood.png');
+      % gets set of static from cast to logical, so dynamic pixels must
+      % have value zero
+      p.leftStatic(p.leftStatic == -1) = 0; 
+      
     else
       %%%% room to load your data: flow2DGt and flow2DGt_noc can be set to
       %%%% zeros if no GT is available; or set doKittiErrors to 0;
