@@ -4,7 +4,7 @@
 % OPTIMFLAGS = /O2 /Oy- /DNDEBUG /openmp
 % for more speed compile externally with other compiler
 
-windows = 1;
+windows = 0;
 sseenabled = 1;
 
 % vcsf eccv14

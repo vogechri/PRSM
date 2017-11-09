@@ -38,6 +38,9 @@ function flow2d = run_pwrs_red(imgNr, storeFolder, subImg, ...
 global doKittiErrors;doKittiErrors =0; % turn on/off permanent error evaluation
 storeOutput = 1; % store the output as flow/stereo files in the folder: storeFolder 
 % saved files can  be read with flow_read( 'filename' )
+storeMesh = 1; % store the output as mesh in mat file in the folder: storeFolder 
+% mesh can be viewed in matlab without texture or in other tools with texture,
+% see mesh/meshHelper.m
 
 
 p.subImg  = 10; % the frame number to proces, eg 10 -> pics 9 (if 3-frame version)
@@ -165,6 +168,7 @@ if ~isdeployed
   path(path,'../createFlow/');
   path(path,'../KittiIO/');
   path(path,'./ViewMappings');
+  path(path,'./mesh');
 end
 
 testImages = imgNr;
@@ -213,8 +217,9 @@ for testImg_ = 1:numel(testImages)
 
     if doKitti
       [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadKittiFlow(dataFolder , p.imgNr, p);
+      imgLRGB = repmat(uint8(cam.I(1).I*255),1,1,3);
     elseif doNREC 
-      [cam, ref, imageName, flow2DGt, flow2DGt_noc] = loadNRECFlow(dataFolder , p.imgNr, p);
+      [cam, ref, imageName, flow2DGt, flow2DGt_noc, imgLRGB] = loadNRECFlow(dataFolder , p.imgNr, p);
       % passing regions in the left and right images that should be
       % considered static (such as bodies rigidly attached to the camera)
       % or invalid (such as rectification artifacts) as images
@@ -258,7 +263,11 @@ for testImg_ = 1:numel(testImages)
     
     % new simplified version - does it work ?
     cprintf('green','Initialization with proposals finished\n');
-    [flow2d, Energy] = pwrsf_v4 ( ref, cam, p, Seg, N_prop, RT_prop );
+    if(storeMesh)
+        [flow2d, Energy, Mesh] = pwrsf_v4 ( ref, cam, p, Seg, N_prop, RT_prop ); %#ok save uses variable, but as string
+    else
+        [flow2d, Energy] = pwrsf_v4 ( ref, cam, p, Seg, N_prop, RT_prop );
+    end
     
     doKittiErrors =1;
     [occErr, noccErr, epes] = getKittiErrSF ( flow2d(:,:,1), flow2d(:,:,2), flow2d(:,:,3) ); %, p, 1 );
@@ -284,6 +293,13 @@ for testImg_ = 1:numel(testImages)
     if storeOutput
       flow_write( cat(3, squeeze(flow2d(:,:,2)), squeeze(flow2d(:,:,3)), ones(size(squeeze(flow2d(:,:,3))))), sprintf('%s/flow/%06d_%02d.png', p.sFolder, p.imgNr, p.subImg ));
       disp_write( squeeze(-flow2d(:,:,1)), sprintf('%s/disp/%06d_%02d.png', p.sFolder, p.imgNr, p.subImg ));
+    end
+    
+    if storeMesh
+        if ~exist(sprintf('%s/mesh/', p.sFolder), 'dir')
+            mkdir(sprintf('%s/mesh/', p.sFolder));
+        end
+        save(sprintf('%s/mesh/%06d_%02d.mat', p.sFolder, p.imgNr, p.subImg ),'Mesh','imgLRGB')
     end
 
   end
