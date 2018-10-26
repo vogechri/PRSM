@@ -171,3 +171,14 @@ Basic usage:
 	'solvePWRSMulti/proposals/generateProposals.m' 
 	from 'TGV_flowDouble' to 'TGV_flow', twice.
 	
+10.	The code already delivers the disparity at the second time frame required for
+	KITTI 2015 benchmark. The main computing function pwrsf_v4.m returns it along
+	disparity and flow. The last line in pwrsf_v4.m:
+	'flow2d =  reconstruc2dFlowHom( ref, cam(1), N_lin, Rt_lin, SegNew, 0 );'
+	composes the 2D output, and the 4th component given by
+	'flow(:,:,4) = cam.I(2).u(:,:,1) - ref.I(2).u(:,:,1);'
+	is exactly the disparity at timestep 1.
+	In the same manner one can easily compute the flow or depthmap between each frame 
+	in the model, eg., in the 3-frame model one could return the disparity in the past
+	or the motion between 1st and 3rd time-step. Other possibilities include to 
+	reconstruct the 3D motion. To do such you can look at reconstruc3DFlowHom.m.
