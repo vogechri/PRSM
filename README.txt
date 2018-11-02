@@ -101,7 +101,8 @@ Solved Issues:
 Basic usage:
 
 1.	Make sure that you read in the correct calibration files and images.
-	As an example some KITTI images are provided along with calibration.
+    As an example some images from the KITTI and NREC datasets are provided 
+    along with calibration.
 
 2. 	There are the options to run the algorithm with 3 frames. 
 	So far it is assumed that the files are given as scenenumber_frame.png 

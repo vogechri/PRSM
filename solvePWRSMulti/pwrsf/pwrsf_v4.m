@@ -1,5 +1,5 @@
 %%% the main function
-function [flow2d, Energy] = pwrsf_v4 ( ref, cam, par, Seg, N_prop, RT_prop )
+function [flow2d, Energy, Mesh] = pwrsf_v4 ( ref, cam, par, Seg, N_prop, RT_prop )
 
 Energy   = 0;
 
@@ -581,5 +581,9 @@ end
 SegNew=Seg;SegNew.Img = int32(allSolutions(:,:,1));SegNew.Ids={};%!! Ids must be empty
 for i=1:max(SegNew.Img(:))+1 SegNew.Ids{i} = find(SegNew.Img == i-1)-1;end;
 flow2d =  reconstruc2dFlowHom( ref, cam(1), N_lin, Rt_lin, SegNew, 0 );
+
+if nargout > 2
+    Mesh =  reconstruct3dMesh(cam(1), N_lin, SegNew);
+end
 
 return;
